@@ -26,6 +26,7 @@ fn main() {
 
     let advent_funcs_2022 = [
         twentytwentytwo::day_one,
+        twentytwentytwo::day_two,
     ];
     match year {
         2021 => advent_funcs_2021[day - 1](lines),

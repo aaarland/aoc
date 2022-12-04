@@ -104,33 +104,33 @@ pub fn day_three(lines: Vec<String>) {
     println!("{}", co2 * oxygen);
 
     return;
-    let mut zero = [0; 12];
-    let mut ones = [0; 12];
-    let mut epsilon = 1;
-    let mut gamma = 1;
-    for line in &lines {
-        let mut index = 0;
-        for c in line.chars() {
-            if c.to_digit(10) == Some(0) {
-                zero[index] += 1;
-            } else {
-                ones[index] += 1;
-            }
-            index += 1;
-        }
-    }
-    for i in 0..12 {
-        if zero[i] <= ones[i] {
-            epsilon <<= 1;
-            gamma <<= 1;
-            gamma |= 1;
-        } else {
-            epsilon <<= 1;
-            epsilon |= 1;
-            gamma <<= 1;
-        }
-        println!("{} {} {} {} ", zero[i], ones[i], epsilon, gamma);
-    }
+    // let mut zero = [0; 12];
+    // let mut ones = [0; 12];
+    // let mut epsilon = 1;
+    // let mut gamma = 1;
+    // for line in &lines {
+    //     let mut index = 0;
+    //     for c in line.chars() {
+    //         if c.to_digit(10) == Some(0) {
+    //             zero[index] += 1;
+    //         } else {
+    //             ones[index] += 1;
+    //         }
+    //         index += 1;
+    //     }
+    // }
+    // for i in 0..12 {
+    //     if zero[i] <= ones[i] {
+    //         epsilon <<= 1;
+    //         gamma <<= 1;
+    //         gamma |= 1;
+    //     } else {
+    //         epsilon <<= 1;
+    //         epsilon |= 1;
+    //         gamma <<= 1;
+    //     }
+    //     println!("{} {} {} {} ", zero[i], ones[i], epsilon, gamma);
+    // }
     // println!("{:?} {:?}", zero, ones)
-    println!("{}", (epsilon & 4095) * (gamma & 4095))
+    // println!("{}", (epsilon & 4095) * (gamma & 4095))
 }
