@@ -28,6 +28,7 @@ fn main() {
         twentytwentytwo::day_one,
         twentytwentytwo::day_two,
         twentytwentytwo::day_three,
+        twentytwentytwo::day_four,
     ];
     match year {
         2021 => advent_funcs_2021[day - 1](lines),

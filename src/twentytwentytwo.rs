@@ -130,29 +130,34 @@ pub fn day_three(lines: Vec<String>) {
 //End day 3
 //Start day 4
 
-fn get_nth_char(line: String, nth: usize) -> u32{
+fn get_nth_char(line: &str, nth: usize) -> u32 {
     line.chars().nth(nth).unwrap().to_digit(10).unwrap()
 }
 
-fn day_four_part_one(lines: Vec<String>){
+fn day_four_part_one(lines: Vec<String>) -> usize {
     let cleaned_rooms = vec![false; 99];
-    for line in lines{
-        let split_lines = line.split(',');
+    let mut total = 0;
+    for line in lines {
+        let mut split_lines = line.split(',');
         let first_half = split_lines.next().unwrap();
         let second_half = split_lines.next().unwrap();
-        let start = get_nth_char(line, 0);
-        let end = get_nth_char(line, 2);
-        for index in start..end{
-            if cleaned_rooms.get(index){
+        let start = get_nth_char(first_half, 0);
+        let end = get_nth_char(first_half, 2);
 
-            }
+        let room_is_covered = &cleaned_rooms[start as usize..end as usize]
+            .iter()
+            .all(|room| *room);
+        if *room_is_covered {
+            total += 1;
+        }
+        
+        for index in start..end {
+            cleaned_rooms[index] = true;
         }
     }
+    return total;
 }
 
-pub fn day_four(lines: Vec<String>){
-
-    println!(
-        "Result is : {}", day_four_part_one(lines)
-    )
+pub fn day_four(lines: Vec<String>) {
+    println!("Result is : {:?}", day_four_part_one(lines))
 }
