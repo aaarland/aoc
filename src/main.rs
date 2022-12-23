@@ -2,6 +2,8 @@ use std::env;
 use std::fs;
 use std::io::BufRead;
 use std::io::BufReader;
+
+use crate::twentytwentytwo::get_all_funcs;
 mod twentytwentyone;
 mod twentytwentytwo;
 
@@ -24,12 +26,7 @@ fn main() {
         twentytwentyone::day_three,
     ];
 
-    let advent_funcs_2022 = [
-        twentytwentytwo::day_one,
-        twentytwentytwo::day_two,
-        twentytwentytwo::day_three,
-        twentytwentytwo::day_four,
-    ];
+    let advent_funcs_2022 = get_all_funcs(); 
     match year {
         2021 => advent_funcs_2021[day - 1](lines),
         2022 => advent_funcs_2022[day - 1](lines),
