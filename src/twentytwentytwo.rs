@@ -9,6 +9,3 @@ mod day_five;
 pub fn get_all_funcs() -> [fn(Vec<String>); 5]{
     return [day_one::day_one, day_two::day_two, day_three::day_three, day_four::day_four, day_five::day_five]
 }
-pub fn day_five(){
-
-}
