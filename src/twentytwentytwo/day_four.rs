@@ -42,6 +42,6 @@ fn day_four_part_one(lines: Vec<String>) -> usize {
     return total;
 }
 
-pub fn day_four(lines: Vec<String>) {
+pub fn solution(lines: Vec<String>) {
     println!("Result is : {:?}", day_four_part_one(lines))
 }

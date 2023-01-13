@@ -1,6 +1,6 @@
 use std::collections::HashSet;
 
-pub fn day_six(lines: Vec<String>){
+pub fn solution(lines: Vec<String>){
     let mut index = 0;
     for _ in lines[0].chars(){
         let mut stack = HashSet::new();

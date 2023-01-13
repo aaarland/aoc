@@ -1,6 +1,6 @@
 
 //Start day 1
-pub fn day_one(lines: Vec<String>) {
+pub fn solution(lines: Vec<String>) {
     let mut all_total_calories: Vec<i32> = vec![];
     let mut total_calories = 0;
     for line in lines {

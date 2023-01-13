@@ -16,7 +16,7 @@
 //     }
 //     return total;
 // }
-pub fn day_three(lines: Vec<String>) {
+pub fn solution(lines: Vec<String>) {
     //split string into two
     let mut total = 0;
     let mut index = 0;

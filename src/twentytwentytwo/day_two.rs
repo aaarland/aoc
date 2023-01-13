@@ -41,7 +41,7 @@ fn check_win(letter: &str, opponent: &str) -> i32 {
         _ => panic!("Something went wrong! {:?}", letter),
     }
 }
-pub fn day_two(lines: Vec<String>) {
+pub fn solution(lines: Vec<String>) {
     let all_letters = lines.iter().map(|line| line.split(' '));
     let mut total = 0;
     for mut letters in all_letters {
