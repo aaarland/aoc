@@ -1,4 +1,12 @@
-pub fn solution(lines: Vec<String>) {
+use crate::solutions::Solution;
+
+pub struct DayFive;
+impl Solution for DayFive {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
+fn solution(lines: Vec<String>) {
     let (mut i, mut quantity, mut from, mut to): (usize, usize, usize, usize);
     let mut index = 0;
     let mut matrix: Vec<Vec<char>> = Vec::new();

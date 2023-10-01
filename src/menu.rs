@@ -8,10 +8,27 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new() -> Result<Config, &'static str> {
-        let year = get_years();
-        let day = get_days();
-        let file = get_file();
+    pub fn new(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+        args.next();
+        let year;
+        let day;
+        let file;
+        if let Some(arg) = args.next() {
+            year = arg.parse::<usize>().expect("Please type a number!");
+        }else{
+            year = get_years();
+        }
+        if let Some(arg) = args.next() {
+            day = arg.parse::<usize>().expect("Please type a number!");
+        }else {
+            day = get_days();
+        }
+
+        if let Some(arg) = args.next() {
+            file = arg;
+        }else {
+            file = get_file();
+        }
         Ok(Config { year, day, file })
     }
 }

@@ -1,5 +1,14 @@
 use std::collections::HashSet;
 
+use crate::solutions::Solution;
+
+pub struct DaySix;
+impl Solution for DaySix {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
+
 pub fn solution(lines: Vec<String>){
     let mut index = 0;
     for _ in lines[0].chars(){

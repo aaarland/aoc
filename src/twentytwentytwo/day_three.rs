@@ -1,3 +1,4 @@
+use crate::solutions::Solution;
 
 //Start day 3
 // fn first_part(lines: Vec<String>) -> u32 {
@@ -16,6 +17,12 @@
 //     }
 //     return total;
 // }
+pub struct DayThree;
+impl Solution for DayThree {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
 pub fn solution(lines: Vec<String>) {
     //split string into two
     let mut total = 0;

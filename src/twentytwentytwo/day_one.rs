@@ -1,6 +1,15 @@
+use crate::solutions::Solution;
 
+pub struct DayOne;
+
+
+impl Solution for DayOne {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
 //Start day 1
-pub fn solution(lines: Vec<String>) {
+fn solution(lines: Vec<String>) {
     let mut all_total_calories: Vec<i32> = vec![];
     let mut total_calories = 0;
     for line in lines {

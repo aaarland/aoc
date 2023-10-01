@@ -1,5 +1,14 @@
+use crate::solutions::Solution;
+
 
 //Start day 4
+//
+pub struct DayFour;
+impl Solution for DayFour {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
 
 fn get_nth_char(line: &str, nth: usize) -> u32 {
     line.chars().nth(nth).unwrap().to_digit(10).unwrap()
@@ -42,6 +51,6 @@ fn day_four_part_one(lines: Vec<String>) -> usize {
     return total;
 }
 
-pub fn solution(lines: Vec<String>) {
+fn solution(lines: Vec<String>) {
     println!("Result is : {:?}", day_four_part_one(lines))
 }

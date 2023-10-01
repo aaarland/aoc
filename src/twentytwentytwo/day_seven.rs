@@ -1,200 +1,212 @@
-use std::{error::Error, cell::RefCell};
+use std::{
+    cell::RefCell,
+    collections::{BTreeMap, HashMap},
+    fmt,
+    rc::Rc,
+};
 
-//use Regex
-use regex::Regex;
+use camino::Utf8PathBuf;
+use indexmap::IndexMap;
+use nom::{
+    branch::alt,
+    bytes::complete::{tag, take_while1},
+    combinator::{all_consuming, map},
+    sequence::{preceded, separated_pair},
+    Finish, IResult,
+};
+
+use crate::solutions::Solution;
+
+pub struct DaySeven;
+impl Solution for DaySeven {
+    fn solve(&self, lines: Vec<String>) -> () {
+        solution(lines);
+    }
+}
+
+fn parse_path(i: &str) -> IResult<&str, Utf8PathBuf> {
+    map(
+        take_while1(|c: char| "abcdefghijklmnopqrstuvwxyz/.".contains(c)),
+        Into::into,
+    )(i)
+}
+
 #[derive(Debug)]
-#[derive(Clone)]
-struct File {
-    id: i32,
-    name: String,
-    size: i32,
-    parent: i32
+struct Ls;
+
+fn parse_ls(i: &str) -> IResult<&str, Ls> {
+    map(tag("ls"), |_| Ls)(i)
 }
 
-trait FileType {
-    fn id(&self) -> i32;
-    fn size(&self) -> i32;
-    fn parent(&self) -> Option<i32> {
-        None
-    }
-    fn files(&self) -> Option<Vec<File>> {
-        None
-    }
-
-}
-
-impl FileType for File {
-    fn id(&self) -> i32 {
-        self.id
-    }
-
-    fn size(&self) -> i32 {
-        self.size
-    }
-    fn parent(&self) -> Option<i32> {
-        Some(self.parent)
-    }
-}
 #[derive(Debug)]
+struct Cd(Utf8PathBuf);
 
-struct FileFolder {
-    id: i32,
-    name: String,
-    parent: Option<i32>,
-    files: Vec<File>,
-    folders: Vec<FileFolder>,
+fn parse_cd(i: &str) -> IResult<&str, Cd> {
+    map(preceded(tag("cd "), parse_path), Cd)(i)
 }
 
-impl FileType for FileFolder {
-    fn id(&self) -> i32 {
-        self.id
+#[derive(Debug)]
+enum Command {
+    Ls,
+    Cd(Utf8PathBuf),
+}
+
+impl From<Ls> for Command {
+    fn from(_ls: Ls) -> Self {
+        Command::Ls
     }
-    fn parent(&self) -> Option<i32> {
-        self.parent
+}
+
+impl From<Cd> for Command {
+    fn from(cd: Cd) -> Self {
+        Command::Cd(cd.0)
     }
-    fn size(&self) -> i32 {
-        let mut total_size = 0;
-        for file in &self.files {
-            total_size += file.size();
-        }
-        for folder in &self.folders {
-            total_size += folder.size();
-        }
-        total_size
+}
+
+fn parse_command(i: &str) -> IResult<&str, Command> {
+    let (i, _) = tag("$ ")(i)?;
+    alt((map(parse_ls, Into::into), map(parse_cd, Into::into)))(i)
+}
+
+#[derive(Debug)]
+enum Entry {
+    Dir(Utf8PathBuf),
+    File(u64, Utf8PathBuf),
+}
+
+fn parse_entry(i: &str) -> IResult<&str, Entry> {
+    let parse_file = map(
+        separated_pair(nom::character::complete::u64, tag(" "), parse_path),
+        |(size, path)| Entry::File(size, path),
+    );
+    let parse_dir = map(preceded(tag("dir "), parse_path), Entry::Dir);
+    alt((parse_file, parse_dir))(i)
+}
+
+#[derive(Debug)]
+enum Line {
+    Command(Command),
+    Entry(Entry),
+}
+
+fn parse_line(i: &str) -> IResult<&str, Line> {
+    alt((
+        map(parse_command, Line::Command),
+        map(parse_entry, Line::Entry),
+    ))(i)
+}
+
+type NodeHandle = Rc<RefCell<Node>>;
+#[derive(Default)]
+struct Node {
+    size: usize,
+    parent: Option<NodeHandle>,
+    children: IndexMap<Utf8PathBuf, NodeHandle>,
+}
+
+impl Node {
+    fn is_dir(&self) -> bool {
+        self.size == 0 && !self.children.is_empty()
     }
-    fn files(&self) -> Option<Vec<File>> {
-        let mut all_files = Vec::new();
-        for file in &self.files {
-            all_files.push(file.clone());
+
+    fn total_size(&self) -> u64 {
+        self.children
+            .values()
+            .map(|child| child.borrow().total_size())
+            .sum::<u64>()
+            + self.size as u64
+    }
+}
+fn all_dirs(n: NodeHandle) -> Box<dyn Iterator<Item = NodeHandle>> {
+    let children = n.borrow().children.values().cloned().collect::<Vec<_>>();
+    Box::new(
+        std::iter::once(n).chain(
+            children
+                .into_iter()
+                .filter_map(|child| {
+                    if child.borrow().is_dir() {
+                        Some(all_dirs(child))
+                    } else {
+                        None
+                    }
+                })
+                .flatten(),
+        ),
+    )
+}
+struct PrettyNode<'a>(&'a NodeHandle);
+
+impl<'a> fmt::Debug for PrettyNode<'a> {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let this = self.0.borrow();
+        if this.size == 0 {
+            writeln!(f, "(dir)")?;
+        } else {
+            writeln!(f, "(file, size={})", this.size)?;
         }
-        for folder in &self.folders {
-            if let Some(files) = folder.files() {
-                for file in files {
-                    all_files.push(file);
+
+        for (name, child) in &this.children {
+            // not very efficient at all, but shrug
+            for (index, line) in format!("{:?}", PrettyNode(child)).lines().enumerate() {
+                if index == 0 {
+                    writeln!(f, "{name} {line}")?;
+                } else {
+                    writeln!(f, "  {line}")?;
                 }
             }
         }
-        Some(all_files)
+        Ok(())
     }
 }
+fn solution(lines: Vec<String>) {
+    let lines = lines
+        .iter()
+        .map(|line| all_consuming(parse_line)(line.as_str()).finish().unwrap().1);
 
-impl FileFolder {
-    fn new(name: String, id: i32, parent: Option<i32>) -> Self {
-        Self {
-            id,
-            name,
-            parent,
-            files: Vec::new(),
-            folders: Vec::new(),
-            
-        }
-    }
-    fn add_file(&mut self, file: File) {
-        self.files.push(file);
-    }
-    fn add_folder(&mut self, folder: FileFolder) {
-        self.folders.push(folder);
-    }
-}
-
-
-struct FileSystem{
-    folders: Vec<FileFolder>,
-    files: Vec<File>
-}
-
-impl FileSystem {
-    fn new(root_folder: FileFolder) -> Self {
-        Self{folders: vec![root_folder], files: vec![]}
-    }
-    fn add_file(&mut self, file: File) {
-        self.files.push(file);
-    }
-    fn add_folder(&mut self, folder: FileFolder) {
-        self.folders.push(folder);
-    }
-
-    fn get_file(&self, id: i32) -> Option<&File> {
-        for file in &self.files {
-            if file.id() == id {
-                return Some(file);
-            }
-        }
-        None
-    }
-
-    fn get_folder(&mut self, id: i32) -> Option<&mut FileFolder> {
-        let mut return_folder = None;
-        self.folders.iter_mut().for_each(|folder| {
-            if folder.id() == id {
-                return_folder = Some(folder);
-            }
-        });
-        return_folder
-    }
-}
-
-pub fn solution(lines: Vec<String>) {
-    //each line is a command
-    //split the string by spaces
-    let root_folder = FileFolder::new("/".to_string(), 0, None);
-    let mut file_system = FileSystem::new(root_folder);
-    let mut current_folder = 0;
-    let mut id = 1;
+    let root = Rc::new(RefCell::new(Node::default()));
+    let mut node = root.clone();
     for line in lines {
-        let mut split_line = line.split(" ");
-        let command = split_line.next().unwrap();
-        let argument = split_line.next().unwrap();
-        //regex for number
-        let number = Regex::new(r"[-+]?[0-9]+").unwrap();
-        // regex for $
-        let dollar = Regex::new(r"\$").unwrap();
-        // regex for 'dir'
-        let dir = Regex::new(r"dir").unwrap();
-
-        if number.is_match(command ){
-            let new_file = File {
-                id,
-                name: argument.to_string(),
-                size: command.parse::<i32>().unwrap(),
-                parent: current_folder
-            };
-            file_system.add_file(new_file);
-        }else if dollar.is_match(command){
-            match argument {
-                "cd" => {
-                    let next_folder = split_line.next().unwrap();
-                    println!("cd {}" , &next_folder);
-                    match next_folder {
-                        ".." => {
-                            current_folder = file_system.get_file(current_folder).unwrap().parent().unwrap();
-                        },
-                        _ => {
-                            current_folder = file_system.get_file(current_folder).unwrap().id();
-                        }
-                    
+        match line {
+            Line::Command(cmd) => match cmd {
+                Command::Ls => {}
+                Command::Cd(path) => match path.as_str() {
+                    "/" => {}
+                    ".." => {
+                        let parent = node.borrow().parent.clone().unwrap();
+                        node = parent;
                     }
-
-                },
-                "ls" => {
-                    println!("ls {}" , command);
-                    for file in file_system.get_file(current_folder).unwrap().files().unwrap() {
-                        println!("{} : {}", file.size, file.name);
+                    _ => {
+                        let child = node.borrow_mut().children.entry(path).or_default().clone();
+                        node = child;
                     }
                 },
-                _ => {
-                    println!("Invalid command");
+            },
+            Line::Entry(entry) => match entry {
+                Entry::Dir(dir) => {
+                    let entry = node.borrow_mut().children.entry(dir).or_default().clone();
+                    entry.borrow_mut().parent = Some(node.clone());
                 }
-                
-            }
-        }else if dir.is_match(command){
-            let new_folder = FileFolder::new(argument.to_string(), id, Some(current_folder));
-            file_system.add_folder(new_folder);
-            file_system.get_folder(current_folder).unwrap().add_folder(&new_folder);
-        }else{
-            //do something
-            println!("Invalid command");
+                Entry::File(size, file) => {
+                    let entry = node.borrow_mut().children.entry(file).or_default().clone();
+                    entry.borrow_mut().parent = Some(node.clone());
+                    entry.borrow_mut().size = size as usize;
+                }
+            },
         }
-        id += 1;
     }
+    let total_space = 70_000_000_u64;
+    let used_space = root.borrow().total_size();
+    let free_space = total_space.checked_sub(dbg!(used_space)).unwrap();
+    let size_needed = 30_000_000_u64;
+    let minimum_space_to_free = size_needed.checked_sub(dbg!(free_space)).unwrap();
+
+    let removed_dir_size = all_dirs(root)
+        .map(|d| d.borrow().total_size())
+        .filter(|&size| size >= minimum_space_to_free)
+        .inspect(|s| {
+            dbg!(s);
+        })
+        .min();
+
+    dbg!(removed_dir_size);
 }
