@@ -10,6 +10,7 @@ mod menu;
 mod solutions;
 mod twentytwentyone;
 mod twentytwentytwo;
+
 fn main() {
     loop {
         let config = menu::Config::new(env::args()).unwrap();
@@ -45,6 +46,5 @@ fn main() {
             "n" => continue,
             _ => println!("Please type y or n"),
         }
-
     }
 }

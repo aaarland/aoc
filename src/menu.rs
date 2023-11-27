@@ -1,5 +1,16 @@
+use std::fs;
 use std::io;
+use std::process::exit;
+use std::time::Duration;
 
+use crossterm::cursor;
+use crossterm::event::poll;
+use crossterm::event::read;
+use crossterm::event::Event;
+use crossterm::event::KeyCode;
+use crossterm::terminal::disable_raw_mode;
+use crossterm::terminal::enable_raw_mode;
+use crossterm::ExecutableCommand;
 
 pub struct Config {
     pub year: usize,
@@ -8,69 +19,98 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(mut args: impl Iterator<Item = String>) -> Result<Config, &'static str> {
+    pub fn new(mut args: impl Iterator<Item = String>) -> io::Result<Config> {
         args.next();
         let year;
         let day;
         let file;
         if let Some(arg) = args.next() {
             year = arg.parse::<usize>().expect("Please type a number!");
-        }else{
+        } else {
             year = get_years();
         }
         if let Some(arg) = args.next() {
             day = arg.parse::<usize>().expect("Please type a number!");
-        }else {
+        } else {
             day = get_days();
         }
 
         if let Some(arg) = args.next() {
             file = arg;
-        }else {
-            file = get_file();
+        } else {
+            file = get_file(year, day);
         }
         Ok(Config { year, day, file })
     }
 }
 
-fn get_years() -> usize{
+fn read_key(height: usize) -> io::Result<usize> {
+    let mut stdout = io::stdout();
+    let index;
+    enable_raw_mode()?;
+    stdout.execute(cursor::SavePosition)?;
+    let (_, row) = cursor::position()?;
+    loop {
+        if poll(Duration::from_millis(500))? {
+            let (_, current_row) = cursor::position()?;
+            match read()? {
+                Event::Key(event) => match event.code {
+                    KeyCode::Char('q') => exit(0),
+                    KeyCode::Char('j') => {
+                        stdout.execute(cursor::MoveDown(1))?;
+                    }
+                    KeyCode::Char('k') => {
+                        if (row - height as u16 + 1) < current_row {
+                            stdout.execute(cursor::MoveUp(1))?;
+                        }
+                    }
+                    KeyCode::Enter => {
+                        index = row - current_row;
+                        break;
+                    }
+                    _ => (),
+                },
+                _ => (),
+            }
+        }
+    }
+    stdout.execute(cursor::RestorePosition)?;
+    disable_raw_mode()?;
+    Ok(height - index as usize - 1)
+}
+fn get_years() -> usize {
     let years = vec![2021, 2022];
-    let mut year = String::new();
     println!("Which year would you like to run?");
-    for year in years {
-        println!("{}", year);
-    }
-    io::stdin()
-        .read_line(&mut year)
-        .expect("Failed to read line");
-    let year: usize = year.trim().parse().expect("Please type a number!");
-    year
+    years
+        .iter()
+        .take(years.len() - 1)
+        .for_each(|year| println!("{}", year));
+    print!("{}", years[years.len() - 1]);
+    let index = read_key(years.len()).unwrap();
+    years[index]
 }
 
-fn get_days() -> usize{
-    let days = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25];
-    let mut day = String::new();
+fn get_days() -> usize {
+    let days = vec![
+        1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25,
+    ];
     println!("Which day would you like to run?");
-    for day in days {
-        println!("{}", day);
-    }
-    io::stdin()
-        .read_line(&mut day)
-        .expect("Failed to read line");
-    let day: usize = day.trim().parse().expect("Please type a number!");
-    day
+    days.iter()
+        .take(days.len() - 1)
+        .for_each(|day| println!("{}", day));
+    print!("{}", days[days.len() - 1]);
+    let index = read_key(days.len()).unwrap();
+    days[index]
 }
 
-fn get_file() -> String{
-    let mut file = String::new();
+fn get_file(year: usize, day: usize) -> String {
     println!("Which file would you like to run?");
-    io::stdin()
-        .read_line(&mut file)
-        .expect("Failed to read line");
-    let file: String = file.trim().parse().expect("Please type a number!");
-    file
+    println!("example");
+    println!("day");
+    let index = read_key(2).unwrap();
+    match index {
+        0 => format!("{}/example{}", year, day),
+        1 => format!("{}/day{}", year, day),
+        _ => exit(1),
+    }
 }
-
-
-
-
