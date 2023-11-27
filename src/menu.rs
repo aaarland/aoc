@@ -1,4 +1,3 @@
-use std::fs;
 use std::io;
 use std::process::exit;
 use std::time::Duration;
@@ -79,7 +78,7 @@ fn read_key(height: usize) -> io::Result<usize> {
     Ok(height - index as usize - 1)
 }
 fn get_years() -> usize {
-    let years = vec![2021, 2022];
+    let years = vec![2021, 2022, 2023];
     println!("Which year would you like to run?");
     years
         .iter()
@@ -106,7 +105,7 @@ fn get_days() -> usize {
 fn get_file(year: usize, day: usize) -> String {
     println!("Which file would you like to run?");
     println!("example");
-    println!("day");
+    print!("day");
     let index = read_key(2).unwrap();
     match index {
         0 => format!("{}/example{}", year, day),

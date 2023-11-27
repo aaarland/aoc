@@ -4,12 +4,13 @@ use std::io;
 use std::io::BufRead;
 use std::io::BufReader;
 
-use crate::twentytwentytwo::TwentyTwentyTwo;
+use crate::solutions::AdventCalendarYear;
 
 mod menu;
 mod solutions;
 mod twentytwentyone;
 mod twentytwentytwo;
+mod twentytwentythree;
 
 fn main() {
     loop {
@@ -30,7 +31,8 @@ fn main() {
 
         match config.year {
             2021 => advent_funcs_2021[config.day - 1](lines),
-            2022 => (TwentyTwentyTwo::new()).run(config.day, lines),
+            2022 => AdventCalendarYear::TwentyTwentyTwo.run(config.day, lines),
+            2023 => AdventCalendarYear::TwentyTwentyThree.run(config.day, lines),
             _ => println!("No such year"),
         }
 
