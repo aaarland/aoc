@@ -1,7 +1,10 @@
-struct DayThree;
 
-impl Solve for DayThree {
+use crate::solutions::Solution;
+pub struct DayThree;
 
+impl Solution for DayThree {
+    fn solve(&self, lines: Vec<String>) -> () {
+    }
 }
 
 fn part_one() {
@@ -26,4 +29,3 @@ mod tests {
 
     }
 }
-

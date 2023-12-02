@@ -1,13 +1,10 @@
 
-use crate::Solve;
-pub struct DaySeven {
+use crate::solutions::Solution;
+pub struct DaySeven;
 
-}
-
-impl Solve for DaySeven {
+impl Solution for DaySeven {
     fn solve(&self, lines: Vec<String>) -> () {
     }
-
 }
 
 fn part_one() {
