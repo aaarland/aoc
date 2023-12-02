@@ -7,11 +7,14 @@ DAY_AS_STRING=('one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine' 't
 function template() {
     DAY=$1
     echo """
+use crate::Solve;
 pub struct Day${DAY} {
 
 }
 
-impl Solve for DayThree {
+impl Solve for Day${DAY} {
+    fn solve(&self, lines: Vec<String>) -> () {
+    }
 
 }
 
