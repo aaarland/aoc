@@ -7,7 +7,7 @@ DAY_AS_STRING=('one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine' 't
 function template() {
     DAY=$1
     echo """
-struct Day${DAY} {
+pub struct Day${DAY} {
 
 }
 
