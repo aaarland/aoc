@@ -11,16 +11,14 @@ mod solutions;
 mod twentytwentyone;
 mod twentytwentytwo;
 mod twentytwentythree;
+mod utils;
 
 fn main() {
     loop {
         let config = menu::Config::new(env::args()).unwrap();
         let file = fs::File::open(&config.file).expect("No Such File");
         let buf = BufReader::new(file);
-        let lines = buf
-            .lines()
-            .map(|l| l.expect("Could not parse line"))
-            .collect();
+        let lines = utils::read_file(&config.file);
         println!("Day {} : In file {}", config.day, config.file);
 
         let advent_funcs_2021 = [
