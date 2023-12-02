@@ -15,7 +15,6 @@ impl Solution for DayOne {
         });
         let mut total = 0;
         numbers.iter().for_each(|(first, second)| {
-            println!("{}{}", first, second);
             if let Ok(number) = format!("{}{}", first, second).parse::<i32>() {
                 total += number;
             }
