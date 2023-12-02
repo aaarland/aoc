@@ -1,3 +1,5 @@
+use std::cmp;
+
 use crate::solutions::Solution;
 
 pub struct DayOne;
@@ -6,41 +8,14 @@ impl Solution for DayOne {
     fn solve(&self, lines: Vec<String>) -> () {
         let mut numbers: Vec<(char, char)> = Vec::new();
         lines.iter().for_each(|line| {
-            let mut first_number = None;
-            for (i, c) in line.chars().enumerate() {
-                if let Some(_) = c.to_digit(10) {
-                    first_number = Some(c);
-                    break;
-                } else {
-                    first_number = match parse_numbers_as_strings(line.to_owned(), i) {
-                        Some(number) => Some(number.to_char()),
-                        None => None,
-                    };
-                    if let Some(_) = first_number {
-                        break;
-                    }
-                }
-            }
-            let mut second_number = None;
-            for (i, c) in line.chars().rev().enumerate() {
-                if let Some(_) = c.to_digit(10) {
-                    second_number = Some(c);
-                    break;
-                } else {
-                    second_number = match parse_numbers_as_strings(line.to_owned(), line.len() - i - 1)
-                    {
-                        Some(number) => Some(number.to_char()),
-                        None => None,
-                    };
-                    if let Some(_) = second_number {
-                        break;
-                    }
-                }
-            }
+            let first_number = get_number_from_line(line.chars(), line.to_owned(), None);
+            let second_number =
+                get_number_from_line(line.chars().rev(), line.to_owned(), Some(line.len() - 1));
             numbers.push((first_number.unwrap_or('0'), second_number.unwrap_or('0')));
         });
         let mut total = 0;
         numbers.iter().for_each(|(first, second)| {
+            println!("{}{}", first, second);
             if let Ok(number) = format!("{}{}", first, second).parse::<i32>() {
                 total += number;
             }
@@ -49,19 +24,33 @@ impl Solution for DayOne {
     }
 }
 
+fn get_number_from_line(
+    e: impl Iterator<Item = char>,
+    line: String,
+    max: Option<usize>,
+) -> Option<char> {
+    for (i, c) in e.enumerate() {
+        if let Some(_) = c.to_digit(10) {
+            return Some(c);
+        } else {
+            let local_idx = match max {
+                Some(max) => max - i,
+                None => i,
+            };
+            match parse_numbers_as_strings(line.to_owned(), local_idx) {
+                Some(number) => return Some(number.to_char()),
+                None => None::<char>,
+            };
+        }
+    }
+    None
+}
+
 fn parse_numbers_as_strings(line: String, i: usize) -> Option<Numbers> {
-    if i + 5 <= line.len() {
-        if let Some(number) = Numbers::from_string(&line[i..i + 5]) {
-            return Some(number);
-        }
-    }
-    if i + 4 <=line.len() {
-        if let Some(number) = Numbers::from_string(&line[i..i + 4]) {
-            return Some(number);
-        }
-    }
-    if i + 3 <= line.len() {
-        if let Some(number) = Numbers::from_string(&line[i..i + 3]) {
+    for idx in 0..3 {
+        let end = cmp::min(i + 5 - idx, line.len());
+        println!("{}", &line[i..end]);
+        if let Some(number) = Numbers::from_string(&line[i..end]) {
             return Some(number);
         }
     }
