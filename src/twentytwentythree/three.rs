@@ -6,8 +6,15 @@ pub struct DayThree;
 impl Solution for DayThree {
     fn solve(&self, lines: Vec<String>) -> () {
         println!("Day 3");
-        println!("Part one: {}", part_one(lines.clone()));
-        println!("Part two: {}", part_two(lines.clone()));
+        let now = std::time::Instant::now();
+        let part_one = part_one(lines.clone());
+        let elapsed = now.elapsed();
+        println!("Part one: {} ({:?})", part_one, elapsed);
+        let now = std::time::Instant::now();
+        let part_two = part_two(lines.clone());
+        let elapsed = now.elapsed();
+        println!("Part two: {} ({:?})", part_two, elapsed);
+
     }
 }
 
