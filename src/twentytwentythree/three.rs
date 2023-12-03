@@ -1,3 +1,5 @@
+use std::collections::{VecDeque, HashSet};
+
 use crate::solutions::Solution;
 pub struct DayThree;
 
@@ -115,7 +117,88 @@ fn part_one(lines: Vec<String>) -> i32 {
 }
 
 fn part_two(lines: Vec<String>) -> i32 {
-    0
+    let mut total = 0;
+    let matrix = lines
+        .iter()
+        .map(|line| {
+            line.chars()
+                .map(|c| EngineScheme::from(c))
+                .collect::<Vec<EngineScheme>>()
+        })
+        .collect::<Vec<Vec<EngineScheme>>>();
+    for (i, line) in matrix.iter().enumerate() {
+        for (j, character) in line.iter().enumerate() {
+            match character {
+                EngineScheme::Gear => {
+                    let mut gear_nums = HashSet::new();
+                    if i == 0 || j == 0 || i == matrix.len() - 1 || j == matrix[i].len() - 1 {
+                        continue;
+                    }
+                    check_and_add_number(&matrix, i - 1, j - 1, &mut gear_nums);
+                    check_and_add_number(&matrix, i - 1, j, &mut gear_nums);
+                    check_and_add_number(&matrix, i - 1, j + 1, &mut gear_nums);
+                    check_and_add_number(&matrix, i, j - 1, &mut gear_nums);
+                    check_and_add_number(&matrix, i, j + 1, &mut gear_nums);
+                    check_and_add_number(&matrix, i + 1, j - 1, &mut gear_nums);
+                    check_and_add_number(&matrix, i + 1, j, &mut gear_nums);
+                    check_and_add_number(&matrix, i + 1, j + 1, &mut gear_nums);
+                    println!("gear nums {:?}", gear_nums);
+                    if gear_nums.len() == 2 {
+                        let gear_num = gear_nums.into_iter().product::<i32>();
+                        total += gear_num;
+                    }
+                }
+                _ => {}
+            }
+        }
+    }
+    total
+}
+
+fn check_and_add_number(
+    matrix: &Vec<Vec<EngineScheme>>,
+    i: usize,
+    j: usize,
+    gear_numbers: &mut HashSet<i32>,
+) {
+    if i < matrix.len() && j < matrix[i].len() {
+        match matrix[i][j] {
+            EngineScheme::Number(_) => {
+                let mut local_nums = VecDeque::new();
+                let mut local_j = j;
+                println!(
+                    "checking {:?}",
+                    matrix[i][local_j],
+                );
+                while let EngineScheme::Number(next_num) = matrix[i][local_j] {
+                    println!("FRONT: {}", next_num);
+                    local_nums.push_front(next_num);
+                    if local_j == 0 {
+                        break;
+                    }
+                    local_j -= 1;
+                }
+                local_j = j + 1;
+                while let EngineScheme::Number(next_num) = matrix[i][local_j] {
+                    println!("BACK: {}", next_num);
+                    local_nums.push_back(next_num);
+                    if local_j == matrix[i].len() - 1 {
+                        break;
+                    }
+                    local_j += 1;
+                }
+                println!("local nums {:?}", local_nums);
+                let gear_num = local_nums
+                    .into_iter()
+                    .collect::<String>()
+                    .parse::<i32>()
+                    .unwrap();
+                println!("gear num {}", gear_num);
+                gear_numbers.insert(gear_num);
+            }
+            _ => {}
+        }
+    }
 }
 
 #[cfg(test)]
@@ -131,5 +214,8 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {}
+    fn test_part_two() {
+        let lines = read_file(&"2023/example3".to_string());
+        assert_eq!(part_two(lines), 467835);
+    }
 }
