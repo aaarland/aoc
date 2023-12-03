@@ -48,7 +48,6 @@ fn get_number_from_line(
 fn parse_numbers_as_strings(line: String, i: usize) -> Option<Numbers> {
     for idx in 0..3 {
         let end = cmp::min(i + 5 - idx, line.len());
-        println!("{}", &line[i..end]);
         if let Some(number) = Numbers::from_string(&line[i..end]) {
             return Some(number);
         }

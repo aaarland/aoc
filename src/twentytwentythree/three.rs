@@ -142,7 +142,6 @@ fn part_two(lines: Vec<String>) -> i32 {
                     check_and_add_number(&matrix, i + 1, j - 1, &mut gear_nums);
                     check_and_add_number(&matrix, i + 1, j, &mut gear_nums);
                     check_and_add_number(&matrix, i + 1, j + 1, &mut gear_nums);
-                    println!("gear nums {:?}", gear_nums);
                     if gear_nums.len() == 2 {
                         let gear_num = gear_nums.into_iter().product::<i32>();
                         total += gear_num;
@@ -166,12 +165,7 @@ fn check_and_add_number(
             EngineScheme::Number(_) => {
                 let mut local_nums = VecDeque::new();
                 let mut local_j = j;
-                println!(
-                    "checking {:?}",
-                    matrix[i][local_j],
-                );
                 while let EngineScheme::Number(next_num) = matrix[i][local_j] {
-                    println!("FRONT: {}", next_num);
                     local_nums.push_front(next_num);
                     if local_j == 0 {
                         break;
@@ -180,20 +174,17 @@ fn check_and_add_number(
                 }
                 local_j = j + 1;
                 while let EngineScheme::Number(next_num) = matrix[i][local_j] {
-                    println!("BACK: {}", next_num);
                     local_nums.push_back(next_num);
                     if local_j == matrix[i].len() - 1 {
                         break;
                     }
                     local_j += 1;
                 }
-                println!("local nums {:?}", local_nums);
                 let gear_num = local_nums
                     .into_iter()
                     .collect::<String>()
                     .parse::<i32>()
                     .unwrap();
-                println!("gear num {}", gear_num);
                 gear_numbers.insert(gear_num);
             }
             _ => {}
