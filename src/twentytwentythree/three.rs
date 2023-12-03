@@ -14,6 +14,7 @@ enum EngineScheme {
     Number(char),
     Symbol,
     Period,
+    Gear,
 }
 
 impl From<char> for EngineScheme {
@@ -30,6 +31,7 @@ impl From<char> for EngineScheme {
             '8' => EngineScheme::Number('8'),
             '9' => EngineScheme::Number('9'),
             '.' => EngineScheme::Period,
+            '*' => EngineScheme::Gear,
             _ => EngineScheme::Symbol,
         }
     }
@@ -53,20 +55,34 @@ fn part_one(lines: Vec<String>) -> i32 {
             match character {
                 EngineScheme::Number(num) => {
                     current_number.push(*num);
-                    if (j + 1 < matrix[i].len() && matrix[i][j + 1] == EngineScheme::Symbol)
-                        || (j > 0 && matrix[i][j - 1] == EngineScheme::Symbol)
-                        || (i + 1 < matrix.len() && matrix[i + 1][j] == EngineScheme::Symbol)
-                        || (i > 0 && matrix[i - 1][j] == EngineScheme::Symbol)
+                    if (j + 1 < matrix[i].len()
+                        && (matrix[i][j + 1] == EngineScheme::Symbol
+                            || matrix[i][j + 1] == EngineScheme::Gear))
+                        || (j > 0
+                            && (matrix[i][j - 1] == EngineScheme::Symbol
+                                || matrix[i][j - 1] == EngineScheme::Gear))
+                        || (i + 1 < matrix.len()
+                            && (matrix[i + 1][j] == EngineScheme::Symbol
+                                || matrix[i + 1][j] == EngineScheme::Gear))
+                        || (i > 0
+                            && (matrix[i - 1][j] == EngineScheme::Symbol
+                                || matrix[i - 1][j] == EngineScheme::Gear))
                         || (i + 1 < matrix.len()
                             && j + 1 < matrix[i].len()
-                            && matrix[i + 1][j + 1] == EngineScheme::Symbol)
-                        || (i > 0 && j > 0 && matrix[i - 1][j - 1] == EngineScheme::Symbol)
+                            && (matrix[i + 1][j + 1] == EngineScheme::Symbol
+                                || matrix[i + 1][j + 1] == EngineScheme::Gear))
+                        || (i > 0
+                            && j > 0
+                            && (matrix[i - 1][j - 1] == EngineScheme::Symbol
+                                || matrix[i - 1][j - 1] == EngineScheme::Gear))
                         || (j > 0
                             && i + 1 < matrix.len()
-                            && matrix[i + 1][j - 1] == EngineScheme::Symbol)
+                            && (matrix[i + 1][j - 1] == EngineScheme::Symbol
+                                || matrix[i + 1][j - 1] == EngineScheme::Gear))
                         || (i > 0
                             && j + 1 < matrix[i].len()
-                            && matrix[i - 1][j + 1] == EngineScheme::Symbol)
+                            && (matrix[i - 1][j + 1] == EngineScheme::Symbol
+                                || matrix[i - 1][j + 1] == EngineScheme::Gear))
                     {
                         is_valid_part = true;
                     }
@@ -78,7 +94,8 @@ fn part_one(lines: Vec<String>) -> i32 {
             if is_valid_part
                 && (j + 1 < matrix[i].len()
                     && (matrix[i][j + 1] == EngineScheme::Period
-                        || matrix[i][j + 1] == EngineScheme::Symbol)
+                        || matrix[i][j + 1] == EngineScheme::Symbol
+                        || matrix[i][j + 1] == EngineScheme::Gear)
                     || j == matrix[i].len() - 1)
             {
                 is_valid_part = false;
