@@ -1,12 +1,15 @@
-use nom::Parser;
-
 use crate::solutions::Solution;
 pub struct DayThree;
 
 impl Solution for DayThree {
-    fn solve(&self, lines: Vec<String>) -> () {}
+    fn solve(&self, lines: Vec<String>) -> () {
+        println!("Day 3");
+        println!("Part one: {}", part_one(lines.clone()));
+        println!("Part two: {}", part_two(lines.clone()));
+    }
 }
 
+#[derive(Debug, PartialEq)]
 enum EngineScheme {
     Number(char),
     Symbol,
@@ -33,8 +36,8 @@ impl From<char> for EngineScheme {
 }
 
 fn part_one(lines: Vec<String>) -> i32 {
-    let width = lines[0].len();
-    let height = lines.len();
+    let mut total = 0;
+    let mut numbers = Vec::new();
     let matrix = lines
         .iter()
         .map(|line| {
@@ -44,64 +47,59 @@ fn part_one(lines: Vec<String>) -> i32 {
         })
         .collect::<Vec<Vec<EngineScheme>>>();
     for (i, line) in matrix.iter().enumerate() {
+        let mut current_number = String::new();
+        let mut is_valid_part = false;
         for (j, character) in line.iter().enumerate() {
             match character {
                 EngineScheme::Number(num) => {
-                    let mut count = 0;
-                    if i > 0 && j > 0 {
-                        if let EngineScheme::Number(_) = matrix[i - 1][j - 1] {
-                            count += 1;
-                        }
+                    current_number.push(*num);
+                    if (j + 1 < matrix[i].len() && matrix[i][j + 1] == EngineScheme::Symbol)
+                        || (j > 0 && matrix[i][j - 1] == EngineScheme::Symbol)
+                        || (i + 1 < matrix.len() && matrix[i + 1][j] == EngineScheme::Symbol)
+                        || (i > 0 && matrix[i - 1][j] == EngineScheme::Symbol)
+                        || (i + 1 < matrix.len()
+                            && j + 1 < matrix[i].len()
+                            && matrix[i + 1][j + 1] == EngineScheme::Symbol)
+                        || (i > 0 && j > 0 && matrix[i - 1][j - 1] == EngineScheme::Symbol)
+                        || (j > 0
+                            && i + 1 < matrix.len()
+                            && matrix[i + 1][j - 1] == EngineScheme::Symbol)
+                        || (i > 0
+                            && j + 1 < matrix[i].len()
+                            && matrix[i - 1][j + 1] == EngineScheme::Symbol)
+                    {
+                        is_valid_part = true;
                     }
-                    if i > 0 {
-                        if let EngineScheme::Number(_) = matrix[i - 1][j] {
-                            count += 1;
-                        }
+                }
+                _ => {
+                    current_number.clear();
+                }
+            }
+            if is_valid_part
+                && (j + 1 < matrix[i].len()
+                    && (matrix[i][j + 1] == EngineScheme::Period
+                        || matrix[i][j + 1] == EngineScheme::Symbol)
+                    || j == matrix[i].len() - 1)
+            {
+                is_valid_part = false;
+
+                match current_number.parse::<i32>() {
+                    Ok(num) => {
+                        total += num;
+                        numbers.push(num);
+                        num
                     }
-                    if i > 0 && j < width - 1 {
-                        if let EngineScheme::Number(_) = matrix[i - 1][j + 1] {
-                            count += 1;
-                        }
-                    }
-                    if j > 0 {
-                        if let EngineScheme::Number(_) = matrix[i][j - 1] {
-                            count += 1;
-                        }
-                    }
-                    if j < width - 1 {
-                        if let EngineScheme::Number(_) = matrix[i][j + 1] {
-                            count += 1;
-                        }
-                    }
-                    if i < height - 1 && j > 0 {
-                        if let EngineScheme::Number(_) = matrix[i + 1][j - 1] {
-                            count += 1;
-                        }
-                    }
-                    if i < height - 1 {
-                        if let EngineScheme::Number(_) = matrix[i + 1][j] {
-                            count += 1;
-                        }
-                    }
-                    if i < height - 1 && j < width - 1 {
-                        if let EngineScheme::Number(_) = matrix[i + 1][j + 1] {
-                            count += 1;
-                        }
-                    }
-                    if count == 0 {
-                        println!("{} {}", i, j);
-                    }
-                },
-                EngineScheme::Symbol => {}
-                EngineScheme::Period => {}
-                _ => {}
+                    Err(_) => 0,
+                };
             }
         }
     }
-    0
+    total
 }
 
-fn part_two() {}
+fn part_two(lines: Vec<String>) -> i32 {
+    0
+}
 
 #[cfg(test)]
 mod tests {
