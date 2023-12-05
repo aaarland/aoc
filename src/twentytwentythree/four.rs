@@ -1,4 +1,4 @@
-use std::cmp;
+use std::collections::HashMap;
 
 use crate::solutions::Solution;
 pub struct DayFour;
@@ -53,66 +53,38 @@ fn part_one(lines: Vec<String>) -> i32 {
     total
 }
 
-fn add_copies(
-    lines: &Vec<String>,
-    line: &String,
-    total_cards: &mut Vec<String>,
-    i: usize,
-) -> Vec<String> {
-    let mut copies = Vec::new();
-    total_cards.push(line.clone());
-    let numbers = line.split(':').nth(1).unwrap();
-    let winning_numbers = numbers
-        .split('|')
-        .nth(0)
-        .unwrap()
-        .split_whitespace()
-        .map(|num| num.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>();
-    let my_numbers = numbers
-        .split('|')
-        .nth(1)
-        .unwrap()
-        .split_whitespace()
-        .map(|num| num.parse::<i32>().unwrap())
-        .collect::<Vec<i32>>();
-    let mut copies_index = i + 1;
-    for (j, num) in winning_numbers.iter().enumerate() {
-        if my_numbers.contains(num) {
-            copies.push(lines[copies_index].clone());
-            copies_index += 1;
+fn part_two(lines: Vec<String>) -> i32 {
+    let mut played = vec![0; lines.len()];
+    for (i, line) in lines.iter().enumerate() {
+        played[i] += 1;
+        let numbers = line.split(':').nth(1).unwrap();
+        let winning_numbers = numbers
+            .split('|')
+            .nth(0)
+            .unwrap()
+            .split_whitespace()
+            .map(|num| num.parse::<i32>().unwrap())
+            .collect::<Vec<i32>>();
+        let my_numbers = numbers
+            .split('|')
+            .nth(1)
+            .unwrap()
+            .split_whitespace()
+            .map(|num| num.parse::<i32>().unwrap())
+            .collect::<Vec<i32>>();
+
+        let mut total_winnings = 0;
+        winning_numbers.iter().for_each(|num| {
+            if my_numbers.contains(num) {
+                total_winnings += 1;
+            }
+        });
+        for j in 0..total_winnings {
+            println!("{} {} {}", played.len(),played[i], played[i + 1]);
+            played[i + j + 1] += played[i];
         }
     }
-    println!("Line {} has {} copies", line, copies.len());
-    copies
-}
-fn part_two(lines: Vec<String>) -> i32 {
-    let mut total_cards = Vec::new();
-    let mut copies: Vec<String> = Vec::new();
-    for (i, line) in lines.iter().enumerate() {
-        let mut new_copies = add_copies(&lines, line, &mut total_cards, i);
-        copies.append(&mut new_copies);
-    }
-
-    copies.iter().for_each(|card| {
-        println!("{}", card);
-    });
-    for i in 0..copies.len() {
-        let index = &copies[i]
-            .chars()
-            .skip_while(|c| !c.is_digit(10))
-            .take_while(|c| c.is_digit(10))
-            .collect::<String>()
-            .parse::<usize>()
-            .unwrap();
-        let mut new_copies = add_copies(&copies, &lines[index - 1], &mut total_cards, i);
-        copies.append(&mut new_copies);
-    }
-    total_cards.iter().for_each(|card| {
-        println!("{}", card);
-    });
-
-    total_cards.len() as i32
+    played.iter().sum()
 }
 
 #[cfg(test)]
