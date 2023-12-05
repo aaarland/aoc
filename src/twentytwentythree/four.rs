@@ -80,7 +80,7 @@ fn part_two(lines: Vec<String>) -> i32 {
             }
         });
         for j in 0..total_winnings {
-            println!("{} {} {}", played.len(),played[i], played[i + 1]);
+            println!("{} {} {}", played.len(), played[i], played[i + 1]);
             played[i + j + 1] += played[i];
         }
     }
