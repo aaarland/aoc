@@ -6,17 +6,11 @@ impl Solution for DayFive {
         let start_time = std::time::Instant::now();
         let part_one_answer = part_one(lines.clone());
         let elapsed = start_time.elapsed();
-        println!(
-            "Day 5 part 1 answer: {} ({:?})",
-            part_one_answer, elapsed
-        );
+        println!("Day 5 part 1 answer: {} ({:?})", part_one_answer, elapsed);
         let start_time = std::time::Instant::now();
         let part_two_answer = part_two(lines);
         let elapsed = start_time.elapsed();
-        println!(
-            "Day 5 part 2 answer: {} ({:?})",
-            part_two_answer, elapsed
-        );
+        println!("Day 5 part 2 answer: {} ({:?})", part_two_answer, elapsed);
     }
 }
 
@@ -57,9 +51,20 @@ fn find_in_map(map: Vec<i64>, almanacs: Vec<Almanac>) -> Vec<i64> {
         .map(|m| {
             for almanac in &almanacs {
                 if m >= &almanac.source && m < &(almanac.source + almanac.range) {
-                    println!("{} {} {}", m, almanac.destination, almanac.source);
-                    println!("{}", almanac.destination - almanac.source + m);
                     return almanac.destination - almanac.source + m;
+                }
+            }
+            *m
+        })
+        .collect::<Vec<_>>()
+}
+
+fn find_in_map_reverse(map: Vec<i64>, almanacs: &Vec<Almanac>) -> Vec<i64> {
+    map.iter()
+        .map(|m| {
+            for almanac in almanacs {
+                if m >= &almanac.destination && m < &(almanac.destination + almanac.range) {
+                    return almanac.source - almanac.destination + m;
                 }
             }
             *m
@@ -82,13 +87,65 @@ fn part_one(lines: Vec<String>) -> i64 {
     let fertilizer_to_water_map = find_in_map(soil_to_fertilizer_map, fertilizer_to_water);
     let water_to_light_map = find_in_map(fertilizer_to_water_map, water_to_light);
     let light_to_temperature_map = find_in_map(water_to_light_map, light_to_temperature);
-    let temperature_to_humidity_map = find_in_map(light_to_temperature_map, temperature_to_humidity);
+    let temperature_to_humidity_map =
+        find_in_map(light_to_temperature_map, temperature_to_humidity);
     let humidity_to_location_map = find_in_map(temperature_to_humidity_map, humidity_to_location);
     humidity_to_location_map.iter().min().unwrap().clone()
 }
 
 fn part_two(lines: Vec<String>) -> i64 {
-    0
+    let seed_ranges = get_seeds(lines[0].clone());
+    let seed_to_soil: Vec<Almanac> = create_almanacs(&lines, "seed-to-soil");
+    let soil_to_fertilizer: Vec<Almanac> = create_almanacs(&lines, "soil-to-fertilizer");
+    let fertilizer_to_water: Vec<Almanac> = create_almanacs(&lines, "fertilizer-to-water");
+    let water_to_light = create_almanacs(&lines, "water-to-light");
+    let light_to_temperature = create_almanacs(&lines, "light-to-temperature");
+    let temperature_to_humidity = create_almanacs(&lines, "temperature-to-humidity");
+    let humidity_to_location = create_almanacs(&lines, "humidity-to-location");
+    println!("creating locations");
+    let mut locations = humidity_to_location
+        .iter()
+        .flat_map(|l| (l.destination..l.destination + l.range).collect::<Vec<_>>())
+        .collect::<Vec<_>>();
+    let min = locations.iter().min().unwrap();
+    locations.append(&mut (1..*min).collect::<Vec<_>>());
+
+    println!("creating maps");
+    let location_to_humidity_map = find_in_map_reverse(locations, &humidity_to_location);
+    let humidity_to_temperature_map =
+        find_in_map_reverse(location_to_humidity_map, &temperature_to_humidity);
+    let temperature_to_light_map =
+        find_in_map_reverse(humidity_to_temperature_map, &light_to_temperature);
+    let light_to_water_map = find_in_map_reverse(temperature_to_light_map, &water_to_light);
+    let water_to_fertilizer_map = find_in_map_reverse(light_to_water_map, &fertilizer_to_water);
+    let fertilizer_to_soil_map = find_in_map_reverse(water_to_fertilizer_map, &soil_to_fertilizer);
+    let soil_to_seed_map = find_in_map_reverse(fertilizer_to_soil_map, &seed_to_soil);
+
+    let mut seeds = Vec::new();
+    let mut i = 0;
+
+    println!("creating seeds");
+    while i < seed_ranges.len() - 1 {
+        println!("{:?}", i);
+        let start = seed_ranges[i];
+        let end = seed_ranges[i] + seed_ranges[i + 1];
+        for seed in soil_to_seed_map.iter() {
+            if seed >= &start && seed < &end {
+                seeds.push(*seed);
+            }
+        }
+        i += 2;
+    }
+
+    let seed_to_soil_map = find_in_map(seeds, seed_to_soil);
+    let soil_to_fertilizer_map = find_in_map(seed_to_soil_map, soil_to_fertilizer);
+    let fertilizer_to_water_map = find_in_map(soil_to_fertilizer_map, fertilizer_to_water);
+    let water_to_light_map = find_in_map(fertilizer_to_water_map, water_to_light);
+    let light_to_temperature_map = find_in_map(water_to_light_map, light_to_temperature);
+    let temperature_to_humidity_map =
+        find_in_map(light_to_temperature_map, temperature_to_humidity);
+    let humidity_to_location_map = find_in_map(temperature_to_humidity_map, humidity_to_location);
+    humidity_to_location_map.iter().min().unwrap().clone()
 }
 
 #[cfg(test)]
@@ -104,5 +161,8 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {}
+    fn test_part_two() {
+        let lines = read_file(&"2023/example5".to_string());
+        assert_eq!(part_two(lines), 46);
+    }
 }
