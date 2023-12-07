@@ -41,7 +41,7 @@ fn part_one(lines: Vec<String>) -> i32 {
         .product::<i32>()
 }
 
-fn part_two(lines: Vec<String>) -> i32 {
+fn part_two(lines: Vec<String>) -> u64 {
     let time = lines[0]
         .split_whitespace()
         .skip(1)
@@ -56,15 +56,16 @@ fn part_two(lines: Vec<String>) -> i32 {
         .parse::<u64>()
         .unwrap();
 
-    let mut total_wins = 0;
+    let mut first = 0;
     for i in 0..time {
         let current_distance = i * (time - i);
         if current_distance > distance {
-            total_wins += 1;
+            first = i;
+            break;
         }
     }
+    return time - (first * 2) + 1;
 
-    total_wins
 }
 
 #[cfg(test)]
