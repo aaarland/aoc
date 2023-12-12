@@ -1,4 +1,4 @@
-use std::{collections::HashMap, fmt::Display, cmp};
+use std::{collections::HashMap, fmt::Display, cmp, sync::{Arc, Mutex}, rc::Rc, cell::RefCell};
 
 use crate::solutions::Solution;
 use rayon::prelude::*;
@@ -125,12 +125,13 @@ impl Universe {
         grid: &Vec<Vec<Spots>>,
         pairs: Vec<(Spots, Spots)>,
     ) -> HashMap<(Spots, Spots), usize> {
-        pairs.par_iter().map(|(a, b)| {
-            ((*a, *b), Self::get_shortest_path(grid, *a, *b))
+        let memo = Rc::new(RefCell::new(HashMap::new()));
+        pairs.iter().map(|(a, b)| {
+            ((*a, *b), Self::get_shortest_path(grid, *a, *b, &mut memo.borrow_mut()))
         }).collect()
     }
 
-    fn get_shortest_path(grid: &Vec<Vec<Spots>>, a: Spots, b: Spots) -> usize {
+    fn get_shortest_path(grid: &Vec<Vec<Spots>>, a: Spots, b: Spots, memo: &mut HashMap<Spots, Vec<Vec<usize>>>) -> usize {
         let (start_y, line) = grid.iter().enumerate().find(|(_, line)| line.contains(&a)).unwrap();
         let start_x = line.iter().position(|c| *c == a).unwrap();
         let (end_y, line) = grid.iter().enumerate().find(|(_, line)| line.contains(&b)).unwrap();
@@ -138,14 +139,14 @@ impl Universe {
         let mut queue = Vec::new();
         let mut visited = vec![vec![false; grid[0].len()]; grid.len()];
         let mut weights = vec![vec![usize::MAX; grid[0].len()]; grid.len()];
+        if memo.contains_key(&a) {
+            return memo[&a][end_y][end_x];
+        }
         weights[start_y][start_x] = 0;
 
         queue.push((start_x, start_y, 0));
         while !queue.is_empty() {
             let (x, y, steps) = queue.remove(0);
-            if x == end_x && y == end_y {
-                return steps;
-            }
             if visited[y][x] {
                 continue;
             }
@@ -164,7 +165,11 @@ impl Universe {
                 queue.push((x, y + 1, steps + 1));
             }
         }
-        panic!("No path found");
+
+        if !memo.contains_key(&a) {
+            memo.insert(a, weights.clone());
+        }
+        return weights[end_y][end_x];
     }
 }
 
