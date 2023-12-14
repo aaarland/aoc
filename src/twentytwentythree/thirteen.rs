@@ -74,7 +74,11 @@ impl Grid {
 
         Grid { grid }
     }
-    fn search_horizontal(&self, search_index: usize) -> Option<i32> {
+    fn search_horizontal(&self, search_index: usize, skip: Option<usize>) -> Option<i32> {
+        if Some(search_index) == skip {
+            return self.search_horizontal(search_index + 1, skip);
+        }
+
         if search_index + 1 >= self.grid.len() {
             return None;
         }
@@ -86,12 +90,15 @@ impl Grid {
                 search_index + 1,
             ) {
                 Some(i) => return Some(i),
-                None => return self.search_horizontal(search_index + 1),
+                None => return self.search_horizontal(search_index + 1, skip),
             }
         }
-        return self.search_horizontal(search_index + 1);
+        return self.search_horizontal(search_index + 1, skip);
     }
-    fn search_vertical(&self, search_index: usize) -> Option<i32> {
+    fn search_vertical(&self, search_index: usize, skip: Option<usize>) -> Option<i32> {
+        if Some(search_index) == skip {
+            return self.search_vertical(search_index + 1, skip);
+        }
         if search_index + 1>= self.grid[0].len() {
             return None;
         }
@@ -103,10 +110,10 @@ impl Grid {
                 search_index + 1,
             ) {
                 Some(i) => return Some(i),
-                None => return self.search_vertical(search_index + 1),
+                None => return self.search_vertical(search_index + 1, skip),
             }
         }
-        return self.search_vertical(search_index + 1);
+        return self.search_vertical(search_index + 1, skip);
     }
 
     fn is_mirror(&self, negative_index: i32, positive_index: usize) -> bool {
@@ -162,8 +169,11 @@ impl Grid {
     }
 
     fn fix_smudge(&mut self, row: usize, col: usize, skip: (Option<usize>, Option<usize>)) -> Option<i32> {
-        if skip.0 == Some(row) || skip.1 == Some(col) {
-            return None;
+        if skip.0 == Some(row) {
+            return self.fix_smudge(row + 1, col, skip);
+        }
+        if skip.1 == Some(col) {
+            return self.fix_smudge(row, col + 1, skip);
         }
         let old = self.grid[row][col];
         let new = match old {
@@ -171,8 +181,9 @@ impl Grid {
             Pattern::Rocks => Pattern::Ash,
         };
         self.grid[row][col] = new;
-        let horizontal = self.search_horizontal(0);
-        let vertical = self.search_vertical(0);
+
+        let horizontal = self.search_horizontal(0, skip.0);
+        let vertical = self.search_vertical(0, skip.1);
         self.grid[row][col] = old;
         match (horizontal, vertical) {
             (Some(h), None) =>  Some((h + 1) * 100),
@@ -203,8 +214,8 @@ fn part_one(lines: Vec<String>) -> i32 {
         }
     });
     grids.iter().map(|grid|{
-        let horizontal = grid.search_horizontal(0);
-        let vertical = grid.search_vertical(0);
+        let horizontal = grid.search_horizontal(0, None);
+        let vertical = grid.search_vertical(0, None);
         match (horizontal, vertical) {
             (Some(h), None) =>  (h + 1) * 100,
             (None, Some(v)) => v + 1,
@@ -225,8 +236,8 @@ fn part_two(lines: Vec<String>) -> i32{
         }
     });
     let skips = grids.iter().map(|grid|{
-        let horizontal = grid.search_horizontal(0);
-        let vertical = grid.search_vertical(0);
+        let horizontal = grid.search_horizontal(0, None);
+        let vertical = grid.search_vertical(0, None);
         match (horizontal, vertical) {
             (Some(h), None) =>  (Some(h as usize), None),
             (None, Some(v)) => (None, Some(v as usize)),
