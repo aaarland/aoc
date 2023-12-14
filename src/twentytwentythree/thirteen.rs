@@ -169,12 +169,6 @@ impl Grid {
     }
 
     fn fix_smudge(&mut self, row: usize, col: usize, skip: (Option<usize>, Option<usize>)) -> Option<i32> {
-        if skip.0 == Some(row) {
-            return self.fix_smudge(row + 1, col, skip);
-        }
-        if skip.1 == Some(col) {
-            return self.fix_smudge(row, col + 1, skip);
-        }
         let old = self.grid[row][col];
         let new = match old {
             Pattern::Ash => Pattern::Rocks,
