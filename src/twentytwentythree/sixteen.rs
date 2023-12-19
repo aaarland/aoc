@@ -1,4 +1,5 @@
 use image::{DynamicImage, GenericImage};
+use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{solutions::Solution, sprites};
 pub struct DaySixteen;
@@ -10,6 +11,11 @@ impl Solution for DaySixteen {
         let elapsed = time.elapsed();
         println!("Part one: {:?}", part_one);
         println!("Part one time: {:?}", elapsed);
+        let time = std::time::Instant::now();
+        let part_two = part_two(lines.clone());
+        let elapsed = time.elapsed();
+        println!("Part two: {:?}", part_two);
+        println!("Part two time: {:?}", elapsed);
     }
 }
 
@@ -44,9 +50,9 @@ struct Beams {
 }
 
 impl Beams {
-    fn new(grid: Vec<Vec<Tiles>>) -> Self {
+    fn new(grid: Vec<Vec<Tiles>>, starter_beam: Beam) -> Self {
         Self {
-            beams: vec![Beam::new(-1, 0, None)],
+            beams: vec![starter_beam],
             visited: vec![vec![vec![]; grid[0].len()]; grid.len()],
             grid,
         }
@@ -273,11 +279,45 @@ fn part_one(lines: Vec<String>) -> i32 {
         .map(|line| line.chars().map(|c| c.into()).collect::<Vec<Tiles>>())
         .collect::<Vec<Vec<Tiles>>>();
 
-    let mut beams = Beams::new(tiles);
+    let mut beams = Beams::new(tiles, Beam::new(-1, 0, None));
     beams.traverse_grid()
 }
 
-fn part_two() {}
+fn part_two(lines: Vec<String>) -> i32 {
+    let tiles = lines
+        .iter()
+        .map(|line| line.chars().map(|c| c.into()).collect::<Vec<Tiles>>())
+        .collect::<Vec<Vec<Tiles>>>();
+
+    let width = tiles[0].len();
+    let height = tiles.len();
+
+    let max_north = (0..width).into_par_iter().map(|x| {
+        let mut beams = Beams::new(tiles.clone(), Beam::new(x as i32, -1, Some(Direction::South)));
+        beams.traverse_grid()
+    }).max();
+
+    let max_south = (0..width).into_par_iter().map(|x| {
+        let mut beams = Beams::new(tiles.clone(), Beam::new(x as i32, height as i32 , Some(Direction::North)));
+        beams.traverse_grid()
+    }).max();
+
+    let max_west = (0..height).into_par_iter().map(|y| {
+        let mut beams = Beams::new(tiles.clone(), Beam::new(-1, y as i32, Some(Direction::East)));
+        beams.traverse_grid()
+    }).max();
+
+    let max_east = (0..height).into_par_iter().map(|y| {
+        let mut beams = Beams::new(tiles.clone(), Beam::new(width as i32 , y as i32, Some(Direction::West)));
+        beams.traverse_grid()
+    }).max();
+
+    println!("North: {:?}", max_north);
+    println!("South: {:?}", max_south);
+    println!("West: {:?}", max_west);
+    println!("East: {:?}", max_east);
+    vec![max_north, max_south, max_west, max_east].iter().max().unwrap().unwrap()
+}
 
 #[cfg(test)]
 mod tests {
@@ -292,5 +332,9 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {}
+    fn test_part_two() {
+        let lines = utils::read_file(&"2023/example16".into());
+        assert_eq!(part_two(lines), 51);
+
+    }
 }
