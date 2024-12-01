@@ -15,6 +15,7 @@ impl AdventCalendarSolutions {
 pub enum AdventCalendarYear {
     TwentyTwentyTwo,
     TwentyTwentyThree,
+    TwentyTwentyFour,
 }
 
 impl AdventCalendarYear {
@@ -31,6 +32,13 @@ impl AdventCalendarYear {
                     solutions: crate::twentytwentythree::get_solutions()
                 };
                 calendar.run(day, lines);
+            },
+            AdventCalendarYear::TwentyTwentyFour => {
+                let calendar = AdventCalendarSolutions {
+                    solutions: crate::twentytwentyfour::get_solutions()
+                };
+                calendar.run(day, lines);
+
             }
         }
     }

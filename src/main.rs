@@ -6,6 +6,7 @@ mod menu;
 mod solutions;
 mod twentytwentyone;
 mod twentytwentythree;
+mod twentytwentyfour;
 mod twentytwentytwo;
 mod utils;
 mod sprites;
@@ -26,6 +27,7 @@ fn main() {
         2021 => advent_funcs_2021[config.day - 1](lines),
         2022 => AdventCalendarYear::TwentyTwentyTwo.run(config.day, lines),
         2023 => AdventCalendarYear::TwentyTwentyThree.run(config.day, lines),
+        2024 => AdventCalendarYear::TwentyTwentyFour.run(config.day, lines),
         _ => println!("No such year"),
     }
 }
