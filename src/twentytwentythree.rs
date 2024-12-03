@@ -1,57 +1,35 @@
-use crate::solutions::AdventSolution;
+use std::collections::HashMap;
+
+use maplit::hashmap;
+
+use crate::solutions::{AdventSolution, Date};
 
 mod eight;
 mod eighteen;
 mod eleven;
-//mod fifteen;
 mod five;
 mod four;
-//mod fourteen;
-//mod nine;
-//mod nineteen;
 mod one;
 mod seven;
-//mod seventeen;
 mod six;
 mod sixteen;
-//mod ten;
 mod thirteen;
 mod three;
-//mod twelve;
-//mod twenty;
-//mod twentyfive;
-//mod twentyfour;
-//mod twentyone;
-//mod twentythree;
-//mod twentytwo;
 mod two;
 
-pub fn get_solutions() -> Vec<AdventSolution> {
-    vec![
-        Box::new(one::DayOne),
-        Box::new(two::DayTwo),
-        Box::new(three::DayThree),
-        Box::new(four::DayFour),
-        Box::new(five::DayFive),
-        Box::new(six::DaySix),
-        Box::new(seven::DaySeven),
-        Box::new(eight::DayEight),
-        //Box::new(nine::DayNine),
-        //Box::new(ten::DayTen),
-        Box::new(eleven::DayEleven),
-        //Box::new(twelve::DayTwelve),
-        Box::new(thirteen::DayThirteen),
-        //Box::new(fourteen::DayFourteen),
-        //Box::new(fifteen::DayFifteen),
-        Box::new(sixteen::DaySixteen),
-        //Box::new(seventeen::DaySeventeen),
-        Box::new(eighteen::DayEighteen),
-        //Box::new(nineteen::DayNineteen),
-        //Box::new(twenty::DayTwenty),
-        //Box::new(twentyone::DayTwentyOne),
-        //Box::new(twentytwo::DayTwentyTwo),
-        //Box::new(twentythree::DayTwentyThree),
-        //Box::new(twentyfour::DayTwentyFour),
-        //Box::new(twentyfive::DayTwentyFive),
-    ]
+pub fn get_solutions() -> HashMap<Date, AdventSolution> {
+    hashmap!{
+        Date::First => Box::new(one::DayOne) as AdventSolution,
+        Date::First => Box::new(two::DayTwo),
+        Date::First => Box::new(three::DayThree),
+        Date::First => Box::new(four::DayFour),
+        Date::First => Box::new(five::DayFive),
+        Date::First => Box::new(six::DaySix),
+        Date::First => Box::new(seven::DaySeven),
+        Date::First => Box::new(eight::DayEight),
+        Date::Eleventh => Box::new(eleven::DayEleven),
+        Date::ThirTeen => Box::new(thirteen::DayThirteen),
+        Date::SixTeen => Box::new(sixteen::DaySixteen),
+        Date::EightTeen => Box::new(eighteen::DayEighteen),
+    }
 }
