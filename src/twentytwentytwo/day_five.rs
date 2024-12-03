@@ -1,12 +1,7 @@
-use crate::solutions::Solution;
+use crate::define_solution;
 
-pub struct DayFive;
-impl Solution for DayFive {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
-    }
-}
-fn solution(lines: Vec<String>) {
+define_solution!(DayFive, solution, solution);
+fn solution(lines: Vec<String>) -> String {
     let (mut i, mut quantity, mut from, mut to): (usize, usize, usize, usize);
     let mut index = 0;
     let mut matrix: Vec<Vec<char>> = Vec::new();
@@ -25,7 +20,7 @@ fn solution(lines: Vec<String>) {
             index += 1;
         }
         let v = line.split(' ').collect::<Vec<&str>>();
-        if v[0] == "move"{
+        if v[0] == "move" {
             quantity = v[1].parse().unwrap();
             from = v[3].parse().unwrap();
             to = v[5].parse().unwrap();
@@ -38,9 +33,9 @@ fn solution(lines: Vec<String>) {
             matrix[to - 1].append(&mut u);
         }
     }
+    let mut result = String::new();
     for m in matrix {
-        println!("{:?}", m[m.len() - 1]);
+        result.push_str(&format!("{:?}", m[m.len() - 1]));
     }
-
+    result
 }
-
