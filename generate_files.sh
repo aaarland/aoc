@@ -7,20 +7,15 @@ DAY_AS_STRING=('one' 'two' 'three' 'four' 'five' 'six' 'seven' 'eight' 'nine' 't
 function template() {
     DAY=$1
     echo """
-use crate::solutions::Solution;
-pub struct Day${DAY};
+use crate::define_solution;
 
-impl Solution for Day${DAY} {
-    fn solve(&self, lines: Vec<String>) -> () {
-    }
+define_solution!(DayTwo, part_one, part_two);
+fn part_one(lines: Vec<String>) -> String {
+    String::new()
 }
 
-fn part_one() {
-
-}
-
-fn part_two() {
-
+fn part_two(lines: Vec<String>) -> String {
+    String::new()
 }
 
 #[cfg(test)]
