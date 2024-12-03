@@ -3,7 +3,7 @@ use crate::solutions::Solution;
 pub struct DayTen;
 
 impl Solution for DayTen {
-    fn solve(&self, lines: Vec<String>) -> () {
+    fn solve(&self, lines: Vec<String>, part: Part) -> Box<dyn Display> {
     }
 }
 

@@ -1,4 +1,5 @@
-use crate::solutions::Solution;
+
+use crate::solutions::{Part, Solution};
 
 
 //Start day 2
@@ -43,7 +44,7 @@ fn check_win(letter: &str, opponent: &str) -> i32 {
         _ => panic!("Something went wrong! {:?}", letter),
     }
 }
-fn solution(lines: Vec<String>) {
+fn solution(lines: Vec<String>) -> String{
     let all_letters = lines.iter().map(|line| line.split(' '));
     let mut total = 0;
     for mut letters in all_letters {
@@ -55,11 +56,11 @@ fn solution(lines: Vec<String>) {
             None => panic!(),
         }
     }
-    println!("The total is {}", total);
+    total.to_string()
 }
 pub struct DayTwo;
 impl Solution for DayTwo {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        solution(lines)
     }
 }

@@ -1,4 +1,3 @@
-use std::fmt::Display;
 
 pub enum Part {
     One,
@@ -6,7 +5,7 @@ pub enum Part {
 }
 pub type AdventSolution = Box<dyn Solution>;
 pub trait Solution {
-    fn solve(&self, lines: Vec<String>, part: Part) -> Box<dyn Display>;
+    fn solve(&self, lines: Vec<String>, part: Part) -> String;
 }
 
 pub enum AdventCalendarYear {

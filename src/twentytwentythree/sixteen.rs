@@ -1,21 +1,15 @@
 use image::{DynamicImage, GenericImage};
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
-use crate::{solutions::Solution, sprites};
+use crate::{solutions::{Part, Solution}, sprites};
 pub struct DaySixteen;
 
 impl Solution for DaySixteen {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let time = std::time::Instant::now();
-        let part_one = part_one(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part one: {:?}", part_one);
-        println!("Part one time: {:?}", elapsed);
-        let time = std::time::Instant::now();
-        let part_two = part_two(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part two: {:?}", part_two);
-        println!("Part two time: {:?}", elapsed);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        match part {
+            Part::One => part_one(lines).to_string(),
+            Part::Two => part_two(lines).to_string(),
+        }
     }
 }
 

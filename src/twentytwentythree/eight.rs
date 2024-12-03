@@ -1,25 +1,26 @@
-
 use std::collections::HashMap;
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 pub struct DayEight;
 
 impl Solution for DayEight {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let time = std::time::Instant::now();
-        let part_one_answer = part_one(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part one answer: {} in {:?}", part_one_answer, elapsed);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        part_one(lines.clone()).to_string()
     }
 }
 
-fn part_one(lines: Vec<String>) -> usize{
+fn part_one(lines: Vec<String>) -> usize {
     let steps = lines[0].clone();
     let mut network = HashMap::new();
     lines[2..].iter().for_each(|line| {
         let mut split = line.split("=");
         let from = split.next().unwrap().trim();
-        let mut to = split.next().unwrap().trim().trim_matches(|c| c == '(' || c == ')').split(", ");
+        let mut to = split
+            .next()
+            .unwrap()
+            .trim()
+            .trim_matches(|c| c == '(' || c == ')')
+            .split(", ");
         let (left, right) = (to.next().unwrap(), to.next().unwrap());
         network.insert(from, (left, right));
     });
@@ -28,7 +29,7 @@ fn part_one(lines: Vec<String>) -> usize{
     while current != "ZZZ" {
         let current_step = steps.chars().nth(step_counter % steps.len()).unwrap();
         let (left, right) = network.get(current).unwrap();
-        if current_step == 'L'{
+        if current_step == 'L' {
             current = left;
         } else {
             current = right;
@@ -38,9 +39,7 @@ fn part_one(lines: Vec<String>) -> usize{
     step_counter
 }
 
-fn part_two() {
-
-}
+fn part_two() {}
 
 #[cfg(test)]
 mod tests {
@@ -55,7 +54,5 @@ mod tests {
     }
 
     #[test]
-    fn test_part_two() {
-
-    }
+    fn test_part_two() {}
 }

@@ -1,16 +1,12 @@
-use std::{collections::HashMap, fmt::Display, cmp, sync::{Arc, Mutex}, rc::Rc, cell::RefCell};
+use std::{cell::RefCell, cmp, collections::HashMap, fmt::Display, rc::Rc};
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 use rayon::prelude::*;
 pub struct DayEleven;
 
 impl Solution for DayEleven {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let time = std::time::Instant::now();
-        let part_one = part_one(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part one: {}", part_one);
-        println!("Elapsed: {:?}", elapsed);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        part_one(lines.clone()).to_string()
     }
 }
 
@@ -68,13 +64,17 @@ impl Universe {
             })
             .collect();
         println!("Finding Galaxies");
-        let galaxyes = grid.iter().flatten().filter(|c| match **c {
-            Spots::Galaxy(_) => true,
-            _ => false,
-        }).collect::<Vec<&Spots>>();
+        let galaxyes = grid
+            .iter()
+            .flatten()
+            .filter(|c| match **c {
+                Spots::Galaxy(_) => true,
+                _ => false,
+            })
+            .collect::<Vec<&Spots>>();
         let mut pairs = Vec::new();
         for i in 0..galaxyes.len() {
-            for j in i+1..galaxyes.len() {
+            for j in i + 1..galaxyes.len() {
                 pairs.push((*galaxyes[i], *galaxyes[j]));
             }
         }
@@ -83,9 +83,8 @@ impl Universe {
         let width = grid[0].len();
         let height = grid.len();
 
-
         println!("Finding paths");
-        let paths = Self::get_paths(&grid,pairs);
+        let paths = Self::get_paths(&grid, pairs);
 
         Self {
             grid,
@@ -126,15 +125,34 @@ impl Universe {
         pairs: Vec<(Spots, Spots)>,
     ) -> HashMap<(Spots, Spots), usize> {
         let memo = Rc::new(RefCell::new(HashMap::new()));
-        pairs.iter().map(|(a, b)| {
-            ((*a, *b), Self::get_shortest_path(grid, *a, *b, &mut memo.borrow_mut()))
-        }).collect()
+        pairs
+            .iter()
+            .map(|(a, b)| {
+                (
+                    (*a, *b),
+                    Self::get_shortest_path(grid, *a, *b, &mut memo.borrow_mut()),
+                )
+            })
+            .collect()
     }
 
-    fn get_shortest_path(grid: &Vec<Vec<Spots>>, a: Spots, b: Spots, memo: &mut HashMap<Spots, Vec<Vec<usize>>>) -> usize {
-        let (start_y, line) = grid.iter().enumerate().find(|(_, line)| line.contains(&a)).unwrap();
+    fn get_shortest_path(
+        grid: &Vec<Vec<Spots>>,
+        a: Spots,
+        b: Spots,
+        memo: &mut HashMap<Spots, Vec<Vec<usize>>>,
+    ) -> usize {
+        let (start_y, line) = grid
+            .iter()
+            .enumerate()
+            .find(|(_, line)| line.contains(&a))
+            .unwrap();
         let start_x = line.iter().position(|c| *c == a).unwrap();
-        let (end_y, line) = grid.iter().enumerate().find(|(_, line)| line.contains(&b)).unwrap();
+        let (end_y, line) = grid
+            .iter()
+            .enumerate()
+            .find(|(_, line)| line.contains(&b))
+            .unwrap();
         let end_x = line.iter().position(|c| *c == b).unwrap();
         let mut queue = Vec::new();
         let mut visited = vec![vec![false; grid[0].len()]; grid.len()];
@@ -155,7 +173,7 @@ impl Universe {
             if x > 0 {
                 queue.push((x - 1, y, steps + 1));
             }
-            if x < grid[0].len() - 1{
+            if x < grid[0].len() - 1 {
                 queue.push((x + 1, y, steps + 1));
             }
             if y > 0 {

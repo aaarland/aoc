@@ -1,9 +1,8 @@
-
 use crate::solutions::Solution;
 pub struct DayEight;
 
 impl Solution for DayEight {
-    fn solve(&self, lines: Vec<String>) -> () {
+    fn solve(&self, lines: Vec<String>, part: Part) -> Box<dyn Display> {
     }
 }
 

@@ -1,20 +1,14 @@
 use std::fmt::Display;
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 pub struct DayThirteen;
 
 impl Solution for DayThirteen {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let time = std::time::Instant::now();
-        let part_one = part_one(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part one: {}", part_one);
-        println!("Elapsed: {:?}", elapsed);
-        let time = std::time::Instant::now();
-        let part_two = part_two(lines.clone());
-        let elapsed = time.elapsed();
-        println!("Part two: {}", part_two);
-        println!("Elapsed: {:?}", elapsed);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        match part {
+            Part::One => part_one(lines).to_string(),
+            Part::Two => part_two(lines).to_string(),
+        }
     }
 }
 
@@ -62,7 +56,6 @@ impl Display for Grid {
         }
         write!(f, "{}", grid)
     }
-
 }
 
 impl Grid {
@@ -99,7 +92,7 @@ impl Grid {
         if Some(search_index) == skip {
             return self.search_vertical(search_index + 1, skip);
         }
-        if search_index + 1>= self.grid[0].len() {
+        if search_index + 1 >= self.grid[0].len() {
             return None;
         }
 
@@ -168,7 +161,12 @@ impl Grid {
         );
     }
 
-    fn fix_smudge(&mut self, row: usize, col: usize, skip: (Option<usize>, Option<usize>)) -> Option<i32> {
+    fn fix_smudge(
+        &mut self,
+        row: usize,
+        col: usize,
+        skip: (Option<usize>, Option<usize>),
+    ) -> Option<i32> {
         let old = self.grid[row][col];
         let new = match old {
             Pattern::Ash => Pattern::Rocks,
@@ -180,18 +178,17 @@ impl Grid {
         let vertical = self.search_vertical(0, skip.1);
         self.grid[row][col] = old;
         match (horizontal, vertical) {
-            (Some(h), None) =>  Some((h + 1) * 100),
+            (Some(h), None) => Some((h + 1) * 100),
             (None, Some(v)) => Some(v + 1),
             _ => {
                 if col + 1 < self.grid[row].len() {
                     return self.fix_smudge(row, col + 1, skip);
-                }else if row + 1 < self.grid.len() {
+                } else if row + 1 < self.grid.len() {
                     return self.fix_smudge(row + 1, 0, skip);
-                }else {
+                } else {
                     return None;
                 }
-
-            },
+            }
         }
     }
 }
@@ -207,18 +204,21 @@ fn part_one(lines: Vec<String>) -> i32 {
             lines
         }
     });
-    grids.iter().map(|grid|{
-        let horizontal = grid.search_horizontal(0, None);
-        let vertical = grid.search_vertical(0, None);
-        match (horizontal, vertical) {
-            (Some(h), None) =>  (h + 1) * 100,
-            (None, Some(v)) => v + 1,
-            _ => 0,
-        }
-    }).sum()
+    grids
+        .iter()
+        .map(|grid| {
+            let horizontal = grid.search_horizontal(0, None);
+            let vertical = grid.search_vertical(0, None);
+            match (horizontal, vertical) {
+                (Some(h), None) => (h + 1) * 100,
+                (None, Some(v)) => v + 1,
+                _ => 0,
+            }
+        })
+        .sum()
 }
 
-fn part_two(lines: Vec<String>) -> i32{
+fn part_two(lines: Vec<String>) -> i32 {
     let mut grids = vec![];
     lines.iter().fold(vec![], |mut lines, current_line| {
         if current_line.is_empty() {
@@ -229,18 +229,23 @@ fn part_two(lines: Vec<String>) -> i32{
             lines
         }
     });
-    let skips = grids.iter().map(|grid|{
-        let horizontal = grid.search_horizontal(0, None);
-        let vertical = grid.search_vertical(0, None);
-        match (horizontal, vertical) {
-            (Some(h), None) =>  (Some(h as usize), None),
-            (None, Some(v)) => (None, Some(v as usize)),
-            _ => (None, None),
-        }
-    }).collect::<Vec<(Option<usize>, Option<usize>)>>();
-    grids.iter_mut().zip(skips).map(|(grid, skip)|{
-        grid.fix_smudge(0, 0, skip).unwrap_or(0)
-    }).sum()
+    let skips = grids
+        .iter()
+        .map(|grid| {
+            let horizontal = grid.search_horizontal(0, None);
+            let vertical = grid.search_vertical(0, None);
+            match (horizontal, vertical) {
+                (Some(h), None) => (Some(h as usize), None),
+                (None, Some(v)) => (None, Some(v as usize)),
+                _ => (None, None),
+            }
+        })
+        .collect::<Vec<(Option<usize>, Option<usize>)>>();
+    grids
+        .iter_mut()
+        .zip(skips)
+        .map(|(grid, skip)| grid.fix_smudge(0, 0, skip).unwrap_or(0))
+        .sum()
 }
 
 #[cfg(test)]
@@ -259,6 +264,5 @@ mod tests {
     fn test_part_two() {
         let lines = utils::read_file(&"2023/example13".to_string());
         assert_eq!(part_two(lines), 400);
-
     }
 }

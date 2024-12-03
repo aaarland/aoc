@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 pub struct DayOne;
 
 impl Solution for DayOne {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let total = part_two(lines);
-        println!("Total: {}", total);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        match part {
+            Part::One => part_one(lines).to_string(),
+            Part::Two => part_two(lines).to_string(),
+        }
     }
 }
 

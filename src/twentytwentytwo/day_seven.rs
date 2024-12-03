@@ -1,6 +1,5 @@
 use std::{
     cell::RefCell,
-    collections::{BTreeMap, HashMap},
     fmt,
     rc::Rc,
 };
@@ -15,12 +14,12 @@ use nom::{
     Finish, IResult,
 };
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 
 pub struct DaySeven;
 impl Solution for DaySeven {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        solution(lines)
     }
 }
 
@@ -158,7 +157,7 @@ impl<'a> fmt::Debug for PrettyNode<'a> {
         Ok(())
     }
 }
-fn solution(lines: Vec<String>) {
+fn solution(lines: Vec<String>) -> String{
     let lines = lines
         .iter()
         .map(|line| all_consuming(parse_line)(line.as_str()).finish().unwrap().1);
@@ -208,5 +207,5 @@ fn solution(lines: Vec<String>) {
         })
         .min();
 
-    dbg!(removed_dir_size);
+    format!("{:?}", removed_dir_size)
 }

@@ -1,11 +1,11 @@
 use std::cmp;
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 
 pub struct DayOne;
 
 impl Solution for DayOne {
-    fn solve(&self, lines: Vec<String>) -> () {
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
         let mut numbers: Vec<(char, char)> = Vec::new();
         lines.iter().for_each(|line| {
             let first_number = get_number_from_line(line.chars(), line.to_owned(), None);
@@ -19,7 +19,7 @@ impl Solution for DayOne {
                 total += number;
             }
         });
-        println!("Total: {}", total);
+        total.to_string()
     }
 }
 

@@ -1,9 +1,8 @@
-
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 pub struct DayTen;
 
 impl Solution for DayTen {
-    fn solve(&self, lines: Vec<String>) -> () {
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
     }
 }
 
@@ -17,7 +16,7 @@ fn part_two() {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+
 
     #[test]
     fn test_part_one() {

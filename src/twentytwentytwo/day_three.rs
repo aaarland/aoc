@@ -1,4 +1,5 @@
-use crate::solutions::Solution;
+
+use crate::solutions::{Part, Solution};
 
 //Start day 3
 // fn first_part(lines: Vec<String>) -> u32 {
@@ -19,11 +20,11 @@ use crate::solutions::Solution;
 // }
 pub struct DayThree;
 impl Solution for DayThree {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        solution(lines)
     }
 }
-pub fn solution(lines: Vec<String>) {
+pub fn solution(lines: Vec<String>) -> String {
     //split string into two
     let mut total = 0;
     let mut index = 0;
@@ -44,10 +45,10 @@ pub fn solution(lines: Vec<String>) {
         index += 3;
     }
 
-    println!("Result is : {} ", total)
 
     //put the first in a set
     //loop through the other string and
+    total.to_string()
 }
 
 //End day 3

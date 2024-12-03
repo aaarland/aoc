@@ -1,6 +1,6 @@
 use std::cmp;
 
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 pub struct DayTwo;
 
 #[cfg(test)]
@@ -20,8 +20,11 @@ mod tests {
 }
 
 impl Solution for DayTwo {
-    fn solve(&self, lines: Vec<String>) -> () {
-        println!("Total: {}", part_two(lines));
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        match part {
+            Part::One => part_one(lines).to_string(),
+            Part::Two => part_two(lines).to_string(),
+        }
     }
 }
 

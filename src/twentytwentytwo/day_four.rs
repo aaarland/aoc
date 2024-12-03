@@ -1,12 +1,11 @@
-use crate::solutions::Solution;
-
+use crate::solutions::{Part, Solution};
 
 //Start day 4
 //
 pub struct DayFour;
 impl Solution for DayFour {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        day_four_part_one(lines).to_string()
     }
 }
 
@@ -49,8 +48,4 @@ fn day_four_part_one(lines: Vec<String>) -> usize {
 
     }
     return total;
-}
-
-fn solution(lines: Vec<String>) {
-    println!("Result is : {:?}", day_four_part_one(lines))
 }

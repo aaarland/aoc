@@ -1,16 +1,13 @@
-use crate::solutions::Solution;
+
+use crate::solutions::{Part, Solution};
 pub struct DaySix;
 
 impl Solution for DaySix {
-    fn solve(&self, lines: Vec<String>) -> () {
-        let start_time = std::time::Instant::now();
-        let part_one_answer = part_one(lines.clone());
-        let elapsed = start_time.elapsed();
-        println!("Day 6 part 1 answer: {} ({:?})", part_one_answer, elapsed);
-        let start_time = std::time::Instant::now();
-        let part_two_answer = part_two(lines);
-        let elapsed = start_time.elapsed();
-        println!("Day 6 part 2 answer: {} ({:?})", part_two_answer, elapsed);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        match part {
+            Part::One => part_one(lines).to_string(),
+            Part::Two => part_two(lines).to_string(),
+        }
     }
 }
 

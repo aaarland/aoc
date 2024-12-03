@@ -1,15 +1,15 @@
-use crate::solutions::Solution;
+use crate::solutions::{Part, Solution};
 
 pub struct DayOne;
 
 
 impl Solution for DayOne {
-    fn solve(&self, lines: Vec<String>) -> () {
-        solution(lines);
+    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+        solution(lines)
     }
 }
 //Start day 1
-fn solution(lines: Vec<String>) {
+fn solution(lines: Vec<String>) -> String {
     let mut all_total_calories: Vec<i32> = vec![];
     let mut total_calories = 0;
     for line in lines {
@@ -29,6 +29,6 @@ fn solution(lines: Vec<String>) {
         print!("{} ", index);
         index -= 1;
     }
-    println!("The max of calories is {}", total_calories)
+    total_calories.to_string()
 }
 //End day 1

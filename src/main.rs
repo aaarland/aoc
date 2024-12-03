@@ -2,6 +2,7 @@ use std::env;
 
 use crate::solutions::AdventCalendarYear;
 
+mod macros;
 mod menu;
 mod solutions;
 mod twentytwentyone;
