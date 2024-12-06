@@ -1,40 +1,43 @@
 #!/bin/bash
 
-# Define the database file
+# Ensure the correct number of arguments is provided
+if [ "$#" -ne 3 ]; then
+  echo "Usage: $0 <year> <type> <number>"
+  echo "Where <type> is either 'day' or 'example', and <number> is the corresponding value."
+  exit 1
+fi
+
+# Assign arguments to variables
+year="$1"
+type="$2"  # Either "day" or "example"
+number="$3" # The numeric value (e.g., 5 for day5 or example5)
+
+# Read piped data into a variable
+data=$(< /dev/stdin)
+
+# Validate type
+if [[ "$type" != "day" && "$type" != "example" ]]; then
+  echo "Error: <type> must be either 'day' or 'example'."
+  exit 1
+fi
+
+# Define the SQLite database file
 DB_FILE="advent_data.db"
 
-# Loop through the years
-for year in 2022 2023 2024; do
-  echo "Processing year $year..."
-
-  # Loop through all exampleX files in the folder
-  for example_file in "$year"/example*; do
-    # Extract the example number (e.g., example1.txt -> 1)
-    example_num=$(basename "$example_file" | sed -E 's/example([0-9]+)/\1/')
-
-    # Construct the corresponding dayX file name
-    day_file="$year/day$example_num"
-
-    # Check if the day file exists
-     if [[ -f "$day_file" ]]; then
-      # Read the contents of the day file
-      full_text=$(<"$day_file")
-    else
-      # If the day file is missing, set full_text to an empty string
-      full_text=""
-      echo "Notice: Day file $day_file not found. Inserting with empty full_text."
-    fi
-      # Read the contents of the example and day files
-      example_text=$(<"$example_file")
-
-      # Insert the data into the database
-      sqlite3 "$DB_FILE" <<EOF
-INSERT INTO aoc (year, day, example, full)
-VALUES ($year, $example_num, "$example_text", "$full_text");
-EOF
-      echo "Inserted: year=$year, day=$example_num "
-  done
-done
-
-echo "All data inserted into the database."
+# SQL logic for updating or inserting
+if [[ "$type" == "day" ]]; then
+  sqlite3 "$DB_FILE" "
+  INSERT INTO aoc (year, day, example, full)
+  VALUES ($year, $number, '', '$data')
+  ON CONFLICT(year, day) DO UPDATE SET full=excluded.full;
+  "
+  echo "Inserted/Updated: year=$year, day=$number, example='', full='$data'"
+elif [[ "$type" == "example" ]]; then
+  sqlite3 "$DB_FILE" "
+  INSERT INTO aoc (year, day, example, full)
+  VALUES ($year, $number, '$data', '')
+  ON CONFLICT(year, day) DO UPDATE SET example=excluded.example;
+  "
+  echo "Inserted/Updated: year=$year, day=$number, example='$data', full=''"
+fi
 
