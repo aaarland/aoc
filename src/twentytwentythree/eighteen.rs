@@ -128,16 +128,13 @@ fn part_one(lines: Vec<String>) -> usize {
             }
         }
     });
-    dig_plan
-        .map
-        .iter_mut()
-        .for_each(|row| {
-            row.iter_mut()
-                .skip_while(|t| **t == Terrain::Ground)
-                .skip_while(|t| **t == Terrain::Trench)
-                .take_while(|t| **t == Terrain::Ground)
-                .for_each(|t| *t = Terrain::Trench);
-        });
+    dig_plan.map.iter_mut().for_each(|row| {
+        row.iter_mut()
+            .skip_while(|t| **t == Terrain::Ground)
+            .skip_while(|t| **t == Terrain::Trench)
+            .take_while(|t| **t == Terrain::Ground)
+            .for_each(|t| *t = Terrain::Trench);
+    });
 
     println!("{}", dig_plan);
     dig_plan

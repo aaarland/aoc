@@ -2,7 +2,6 @@ use crate::solutions::{Part, Solution};
 
 pub struct DayOne;
 
-
 impl Solution for DayOne {
     fn solve(&self, lines: Vec<String>, part: Part) -> String {
         solution(lines)

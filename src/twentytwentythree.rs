@@ -18,7 +18,7 @@ mod three;
 mod two;
 
 pub fn get_solutions() -> HashMap<Date, AdventSolution> {
-    hashmap!{
+    hashmap! {
         Date::First => Box::new(one::DayOne) as AdventSolution,
         Date::First => Box::new(two::DayTwo),
         Date::First => Box::new(three::DayThree),

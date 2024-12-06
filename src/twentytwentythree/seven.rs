@@ -217,9 +217,7 @@ fn part_one(lines: Vec<String>) -> usize {
     hands
         .iter()
         .enumerate()
-        .map(|(i, hand)| {
-            (i + 1) * hand.1
-        })
+        .map(|(i, hand)| (i + 1) * hand.1)
         .sum::<usize>()
 }
 

@@ -45,7 +45,6 @@ fn day_four_part_one(lines: Vec<String>) -> usize {
         for index in start..end {
             cleaned_rooms[index as usize] = true;
         }
-
     }
     return total;
 }

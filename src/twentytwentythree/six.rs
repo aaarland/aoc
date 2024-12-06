@@ -1,4 +1,3 @@
-
 use crate::solutions::{Part, Solution};
 pub struct DaySix;
 
@@ -62,7 +61,6 @@ fn part_two(lines: Vec<String>) -> u64 {
         }
     }
     return time - (first * 2) + 1;
-
 }
 
 #[cfg(test)]

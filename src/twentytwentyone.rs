@@ -1,4 +1,3 @@
-
 pub fn day_one(lines: Vec<String>) {
     let msg = "Expected a number";
     let mut prev_line: usize = lines[0].parse::<usize>().expect(msg)

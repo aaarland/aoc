@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
-
 pub enum Part {
     One,
     Two,
@@ -14,7 +13,7 @@ pub enum Date {
     First,
     Second,
     Third,
-    Forth,
+    Fourth,
     Fifth,
     Sixth,
     Seventh,

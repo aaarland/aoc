@@ -17,7 +17,7 @@ pub fn get_solutions() -> HashMap<Date, AdventSolution> {
         Date::First => Box::new(day_one::DayOne) as AdventSolution,
         Date::Second => Box::new(day_two::DayTwo) as AdventSolution,
         Date::Third => Box::new(day_three::DayThree),
-        Date::Forth => Box::new(day_four::DayFour),
+        Date::Fourth => Box::new(day_four::DayFour),
         Date::Fifth => Box::new(day_five::DayFive),
         Date::Sixth => Box::new(day_six::DaySix),
         Date::Seventh => Box::new(day_seven::DaySeven),

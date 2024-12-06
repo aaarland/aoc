@@ -1,6 +1,4 @@
-
 use crate::solutions::{Part, Solution};
-
 
 //Start day 2
 fn check_letter(letter: Option<&str>, opponent: &str) -> i32 {
@@ -44,7 +42,7 @@ fn check_win(letter: &str, opponent: &str) -> i32 {
         _ => panic!("Something went wrong! {:?}", letter),
     }
 }
-fn solution(lines: Vec<String>) -> String{
+fn solution(lines: Vec<String>) -> String {
     let all_letters = lines.iter().map(|line| line.split(' '));
     let mut total = 0;
     for mut letters in all_letters {

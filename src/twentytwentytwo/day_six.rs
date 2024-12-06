@@ -9,12 +9,12 @@ impl Solution for DaySix {
     }
 }
 
-pub fn solution(lines: Vec<String>) -> String{
+pub fn solution(lines: Vec<String>) -> String {
     let mut index = 0;
-    for _ in lines[0].chars(){
+    for _ in lines[0].chars() {
         let mut stack = HashSet::new();
-        for n in index..index+14{
-            if stack.contains(&lines[0].chars().nth(n).unwrap()){
+        for n in index..index + 14 {
+            if stack.contains(&lines[0].chars().nth(n).unwrap()) {
                 break;
             }
             stack.insert(lines[0].chars().nth(n).unwrap());

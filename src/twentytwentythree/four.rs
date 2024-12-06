@@ -1,4 +1,3 @@
-
 use crate::solutions::{Part, Solution};
 pub struct DayFour;
 

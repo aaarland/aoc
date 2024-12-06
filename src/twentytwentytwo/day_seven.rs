@@ -1,8 +1,4 @@
-use std::{
-    cell::RefCell,
-    fmt,
-    rc::Rc,
-};
+use std::{cell::RefCell, fmt, rc::Rc};
 
 use camino::Utf8PathBuf;
 use indexmap::IndexMap;
@@ -157,7 +153,7 @@ impl<'a> fmt::Debug for PrettyNode<'a> {
         Ok(())
     }
 }
-fn solution(lines: Vec<String>) -> String{
+fn solution(lines: Vec<String>) -> String {
     let lines = lines
         .iter()
         .map(|line| all_consuming(parse_line)(line.as_str()).finish().unwrap().1);

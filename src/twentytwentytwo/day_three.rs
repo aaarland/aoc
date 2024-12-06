@@ -1,4 +1,3 @@
-
 use crate::solutions::{Part, Solution};
 
 //Start day 3
@@ -44,7 +43,6 @@ pub fn solution(lines: Vec<String>) -> String {
         }
         index += 3;
     }
-
 
     //put the first in a set
     //loop through the other string and

@@ -5,13 +5,12 @@ use crate::solutions::AdventCalendarYear;
 mod macros;
 mod menu;
 mod solutions;
+mod sprites;
+mod twentytwentyfour;
 mod twentytwentyone;
 mod twentytwentythree;
-mod twentytwentyfour;
 mod twentytwentytwo;
 mod utils;
-mod sprites;
-
 
 fn main() {
     let config = menu::Config::new(env::args()).unwrap();

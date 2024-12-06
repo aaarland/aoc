@@ -23,9 +23,7 @@ pub fn load_sprite(
         for col in 0..cols {
             let sprite = sprite_sheet.clone();
             let sprite = sprite.crop_imm(col * size, row * size, size, size);
-            sprites.push(
-                sprite,
-            );
+            sprites.push(sprite);
         }
     }
     Ok(sprites)
