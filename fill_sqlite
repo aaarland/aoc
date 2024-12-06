@@ -1,0 +1,40 @@
+#!/bin/bash
+
+# Define the database file
+DB_FILE="advent_data.db"
+
+# Loop through the years
+for year in 2022 2023 2024; do
+  echo "Processing year $year..."
+
+  # Loop through all exampleX files in the folder
+  for example_file in "$year"/example*; do
+    # Extract the example number (e.g., example1.txt -> 1)
+    example_num=$(basename "$example_file" | sed -E 's/example([0-9]+)/\1/')
+
+    # Construct the corresponding dayX file name
+    day_file="$year/day$example_num"
+
+    # Check if the day file exists
+     if [[ -f "$day_file" ]]; then
+      # Read the contents of the day file
+      full_text=$(<"$day_file")
+    else
+      # If the day file is missing, set full_text to an empty string
+      full_text=""
+      echo "Notice: Day file $day_file not found. Inserting with empty full_text."
+    fi
+      # Read the contents of the example and day files
+      example_text=$(<"$example_file")
+
+      # Insert the data into the database
+      sqlite3 "$DB_FILE" <<EOF
+INSERT INTO aoc (year, day, example, full)
+VALUES ($year, $example_num, "$example_text", "$full_text");
+EOF
+      echo "Inserted: year=$year, day=$example_num "
+  done
+done
+
+echo "All data inserted into the database."
+
