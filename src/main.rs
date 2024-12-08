@@ -2,6 +2,7 @@ use core::panic;
 use std::env;
 
 use sqlx::{Connection, SqliteConnection};
+use utils::{get_pool, read_db};
 
 use crate::solutions::AdventCalendarYear;
 
@@ -24,28 +25,9 @@ async fn main() {
     let config = menu::Config::new(env::args()).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
-    let new_lines = sqlx::query!(
-        "SELECT example, full FROM aoc where day = ? and year = ?",
-        day,
-        year
-    )
-    .fetch_all(&mut connection)
-    .await
-    .expect("Failed to query lol");
-    let lines = new_lines
-        .iter()
-        .map(|thing| match config.file {
-            _ if config.file.contains("example") => thing.example.clone().unwrap(),
-            _ if config.file.contains("day") => thing.full.clone().unwrap(),
-            _ => panic!("couldn't find example or day in file name"),
-        })
-        .flat_map(|result| {
-            result
-                .split('\n')
-                .map(|string| string.to_string())
-                .collect::<Vec<_>>()
-        })
-        .collect();
+    let pool = get_pool().await;
+    let lines = read_db(pool, day, year, config.file);
+
     //let lines = utils::read_file(&config.file);
     println!("Day {} : In file {}", config.day, config.file);
 

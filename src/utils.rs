@@ -5,6 +5,23 @@ use std::{
 };
 
 use regex::Regex;
+use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
+use tokio::sync::OnceCell;
+
+// Use OnceCell for one-time initialization of the connection pool
+static POOL: OnceCell<SqlitePool> = OnceCell::const_new();
+
+// Function to initialize the pool and return a reference to it
+pub async fn get_pool() -> &'static SqlitePool {
+    POOL.get_or_init(|| async {
+        SqlitePoolOptions::new()
+            .max_connections(5)
+            .connect("sqlite:advent_data.db")
+            .await
+            .expect("Failed to connect to db")
+    })
+    .await
+}
 
 pub fn read_file(location: &String) -> Vec<String> {
     let file = File::open(location).expect("Could not open file");
@@ -29,7 +46,7 @@ pub fn extract_day_year(file: &str) -> (i32, i32) {
 }
 
 pub async fn read_db(
-    connection: &mut sqlx::SqliteConnection,
+    connection: &sqlx::SqlitePool,
     day: i32,
     year: i32,
     file: String,
