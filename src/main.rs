@@ -1,4 +1,3 @@
-use core::panic;
 use std::env;
 
 use sqlx::{Connection, SqliteConnection};
@@ -18,15 +17,11 @@ mod utils;
 
 #[tokio::main]
 async fn main() {
-    let mut connection = SqliteConnection::connect("sqlite:advent_data.db")
-        .await
-        .expect("failed to connect to db lol");
-
     let config = menu::Config::new(env::args()).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
     let pool = get_pool().await;
-    let lines = read_db(pool, day, year, config.file);
+    let lines = read_db(pool, day, year, &config.file).await;
 
     //let lines = utils::read_file(&config.file);
     println!("Day {} : In file {}", config.day, config.file);

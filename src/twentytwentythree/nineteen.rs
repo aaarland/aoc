@@ -17,12 +17,12 @@ fn part_two() {
 
 #[cfg(test)]
 mod tests {
-    #[test]
+    #[tokio::test]
     fn test_part_one() {
 
     }
 
-    #[test]
+    #[tokio::test]
     fn test_part_two() {
 
     }

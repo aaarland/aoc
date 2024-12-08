@@ -47,12 +47,12 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_one() {
-        let lines = read_file(&"2023/example8".into());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = read_file(&"2023/example8".into()).await;
         assert_eq!(part_one(lines), 2);
     }
 
-    #[test]
-    fn test_part_two() {}
+    #[tokio::test]
+    async fn test_part_two() {}
 }

@@ -199,15 +199,15 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_one() {
-        let lines = read_file(&"2023/example3".to_string());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = read_file(&"2023/example3".to_string()).await;
         assert_eq!(part_one(lines), 4361);
     }
 
-    #[test]
-    fn test_part_two() {
-        let lines = read_file(&"2023/example3".to_string());
+    #[tokio::test]
+    async fn test_part_two() {
+        let lines = read_file(&"2023/example3".to_string()).await;
         assert_eq!(part_two(lines), 467835);
     }
 }

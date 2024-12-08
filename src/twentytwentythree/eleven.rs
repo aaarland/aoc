@@ -209,12 +209,12 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_one() {
-        let lines = utils::read_file(&"2023/example11".to_string());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = utils::read_file(&"2023/example11".to_string()).await;
         assert_eq!(part_one(lines), 374);
     }
 
-    #[test]
-    fn test_part_two() {}
+    #[tokio::test]
+    async fn test_part_two() {}
 }

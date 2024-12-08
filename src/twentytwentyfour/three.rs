@@ -38,7 +38,7 @@ enum Logic {
 }
 
 fn part_two(lines: Vec<String>) -> String {
-    let mut current_logic = Logic::Do;
+    let current_logic = Logic::Do;
     let multiplications: Vec<(i32, i32)> = lines.iter().fold(Vec::new(), |mut acc, next| {
         let pattern = Regex::new(r"mul\((\d+),(\d+)\)").expect("regex failed");
         let mut donts: VecDeque<_> = next.split("don't()").collect();
@@ -65,14 +65,14 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_one() {
-        let lines = utils::read_file(&"2024/example3".into());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = utils::read_file(&"2024/example3".into()).await;
         assert_eq!(part_one(lines), "161");
     }
 
-    #[test]
-    fn test_part_two() {
+    #[tokio::test]
+    async fn test_part_two() {
         let lines = vec![
             "xmul(2,4)&mul[3,7]!^don't()_mul(5,5)+mul(32,64](mul(11,8)undo()?mul(8,5))".into(),
         ];

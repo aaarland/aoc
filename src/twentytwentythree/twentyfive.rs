@@ -20,12 +20,12 @@ fn part_two() {
 mod tests {
 
 
-    #[test]
+    #[tokio::test]
     fn test_part_one() {
 
     }
 
-    #[test]
+    #[tokio::test]
     fn test_part_two() {
 
     }

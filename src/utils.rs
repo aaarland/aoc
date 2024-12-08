@@ -1,5 +1,6 @@
 use core::panic;
 use std::{
+    collections::VecDeque,
     fs::File,
     io::{BufRead, BufReader},
 };
@@ -23,12 +24,18 @@ pub async fn get_pool() -> &'static SqlitePool {
     .await
 }
 
-pub fn read_file(location: &String) -> Vec<String> {
-    let file = File::open(location).expect("Could not open file");
-    let buf = BufReader::new(file);
-    buf.lines()
-        .map(|l| l.expect("Could not parse line"))
-        .collect()
+pub async fn read_file(location: &String) -> Vec<String> {
+    let Some((year, rest)) = location.split_once("/") else {
+        panic!("No / delimiter in string {location}");
+    };
+    let day = rest
+        .chars()
+        .skip_while(|c| !('0'..='9').contains(c))
+        .collect::<String>()
+        .parse::<i32>()
+        .expect("Day not found in location");
+    let pool = get_pool().await;
+    read_db(pool, day, year.parse().expect("failed to parse year"), location).await
 }
 
 pub fn extract_day_year(file: &str) -> (i32, i32) {
@@ -49,7 +56,7 @@ pub async fn read_db(
     connection: &sqlx::SqlitePool,
     day: i32,
     year: i32,
-    file: String,
+    file: &String,
 ) -> Vec<String> {
     let new_lines = sqlx::query!(
         "SELECT example, full FROM aoc where day = ? and year = ?",

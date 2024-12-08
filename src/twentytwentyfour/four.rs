@@ -122,13 +122,13 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn test_part_one() {
-        let lines = utils::read_file(&"2024/example4".into());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = utils::read_file(&"2024/example4".into()).await;
         //let fake = "MMMSXXMASM";
         assert_eq!(part_one(lines), "18");
     }
 
-    #[test]
-    fn test_part_two() {}
+    #[tokio::test]
+    async fn test_part_two() {}
 }

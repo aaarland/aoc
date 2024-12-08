@@ -6,15 +6,15 @@ pub struct DayTwo;
 #[cfg(test)]
 mod tests {
     use crate::utils::read_file;
-    #[test]
-    fn test_part_one() {
-        let lines = read_file(&"2023/example2".to_string());
+    #[tokio::test]
+    async fn test_part_one() {
+        let lines = read_file(&"2023/example2".to_string()).await;
         assert_eq!(super::part_one(lines), 8);
     }
 
-    #[test]
-    fn test_part_two() {
-        let lines = read_file(&"2023/example2".to_string());
+    #[tokio::test]
+    async fn test_part_two() {
+        let lines = read_file(&"2023/example2".to_string()).await;
         assert_eq!(super::part_two(lines), 2286);
     }
 }
