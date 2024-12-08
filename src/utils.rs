@@ -34,8 +34,7 @@ pub async fn read_file(location: &String) -> Vec<String> {
         .collect::<String>()
         .parse::<i32>()
         .expect("Day not found in location");
-    let pool = get_pool().await;
-    read_db(pool, day, year.parse().expect("failed to parse year"), location).await
+    read_db(day, year.parse().expect("failed to parse year"), location).await
 }
 
 pub fn extract_day_year(file: &str) -> (i32, i32) {
@@ -53,17 +52,17 @@ pub fn extract_day_year(file: &str) -> (i32, i32) {
 }
 
 pub async fn read_db(
-    connection: &sqlx::SqlitePool,
     day: i32,
     year: i32,
     file: &String,
 ) -> Vec<String> {
+    let pool = get_pool().await;
     let new_lines = sqlx::query!(
         "SELECT example, full FROM aoc where day = ? and year = ?",
         day,
         year
     )
-    .fetch_all(connection)
+    .fetch_all(pool)
     .await
     .expect("Failed to query lol");
     new_lines

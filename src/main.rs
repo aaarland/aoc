@@ -1,7 +1,6 @@
 use std::env;
 
-use sqlx::{Connection, SqliteConnection};
-use utils::{get_pool, read_db};
+use utils::read_db;
 
 use crate::solutions::AdventCalendarYear;
 
@@ -20,8 +19,7 @@ async fn main() {
     let config = menu::Config::new(env::args()).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
-    let pool = get_pool().await;
-    let lines = read_db(pool, day, year, &config.file).await;
+    let lines = read_db(day, year, &config.file).await;
 
     //let lines = utils::read_file(&config.file);
     println!("Day {} : In file {}", config.day, config.file);
