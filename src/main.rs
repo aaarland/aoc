@@ -14,12 +14,15 @@ mod twentytwentythree;
 mod twentytwentytwo;
 mod utils;
 
-#[tokio::main]
-async fn main() {
+fn main() {
     let config = menu::Config::new(env::args()).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
-    let lines = read_db(day, year, &config.file).await;
+    let lines = tokio::runtime::Builder::new_multi_thread()
+        .enable_all()
+        .build()
+        .unwrap()
+        .block_on(async { read_db(day, year, &config.file).await });
 
     //let lines = utils::read_file(&config.file);
     println!("Day {} : In file {}", config.day, config.file);
