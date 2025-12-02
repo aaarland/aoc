@@ -8,6 +8,7 @@ mod macros;
 mod menu;
 mod solutions;
 mod sprites;
+mod twentytwentyfive;
 mod twentytwentyfour;
 mod twentytwentyone;
 mod twentytwentythree;
@@ -35,9 +36,12 @@ fn main() {
 
     match config.year {
         2021 => advent_funcs_2021[config.day - 1](lines),
-        2022 => AdventCalendarYear::TwentyTwentyTwo.run(config.day, lines),
-        2023 => AdventCalendarYear::TwentyTwentyThree.run(config.day, lines),
-        2024 => AdventCalendarYear::TwentyTwentyFour.run(config.day, lines),
-        _ => println!("No such year"),
+        _ => {
+            if let Ok(year) = AdventCalendarYear::try_from(config.year) {
+                year.run(config.day, lines)
+            }else {
+                println!("No such year");
+            }
+        }
     }
 }

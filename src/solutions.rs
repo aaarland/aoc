@@ -45,6 +45,20 @@ pub enum AdventCalendarYear {
     TwentyTwentyTwo,
     TwentyTwentyThree,
     TwentyTwentyFour,
+    TwentyTwentyFive,
+}
+impl TryFrom<usize> for AdventCalendarYear {
+    type Error = &'static str;
+
+    fn try_from(value: usize) -> Result<Self, Self::Error> {
+        match value {
+            2022 => Ok(AdventCalendarYear::TwentyTwentyTwo),
+            2023 => Ok(AdventCalendarYear::TwentyTwentyThree),
+            2024 => Ok(AdventCalendarYear::TwentyTwentyFour),
+            2025 => Ok(AdventCalendarYear::TwentyTwentyFive),
+            _ => Err("Outside of range"),
+        }
+    }
 }
 
 impl AdventCalendarYear {
@@ -53,6 +67,7 @@ impl AdventCalendarYear {
             AdventCalendarYear::TwentyTwentyTwo => crate::twentytwentytwo::get_solutions(),
             AdventCalendarYear::TwentyTwentyThree => crate::twentytwentythree::get_solutions(),
             AdventCalendarYear::TwentyTwentyFour => crate::twentytwentyfour::get_solutions(),
+            AdventCalendarYear::TwentyTwentyFive => crate::twentytwentyfive::get_solutions(),
         }
     }
     pub fn run(&self, day: usize, lines: Vec<String>) {

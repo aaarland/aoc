@@ -78,7 +78,7 @@ fn read_key(height: usize) -> io::Result<usize> {
     Ok(height - index as usize - 1)
 }
 fn get_years() -> usize {
-    let years = vec![2021, 2022, 2023, 2024];
+    let years = vec![2021, 2022, 2023, 2024, 2025];
     println!("Which year would you like to run?");
     years
         .iter()
