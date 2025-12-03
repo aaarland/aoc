@@ -1,4 +1,3 @@
-use std::cmp::max;
 
 use num_traits::abs;
 
