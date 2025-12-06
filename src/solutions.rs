@@ -79,8 +79,8 @@ impl AdventCalendarYear {
             panic!("Day not implemented {day}")
         };
         let part_one = solution.solve(lines.clone(), Part::One);
-        let part_two = solution.solve(lines, Part::Two);
         println!("Part 1: {part_one}");
+        let part_two = solution.solve(lines, Part::Two);
         println!("Part 2: {part_two}");
     }
 }
