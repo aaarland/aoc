@@ -12,6 +12,7 @@ use crossterm::{
 };
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
+use tokio::time::error::Elapsed;
 
 pub enum Part {
     One,
@@ -76,6 +77,9 @@ struct Animator {
     stdout: Stdout,
 }
 
+const FPS: u32 = 60;
+const FRAME_DURATION: Duration = Duration::from_millis(1000 / FPS as u64);
+
 impl Animator {
     fn new() -> Self {
         let stdout = stdout();
@@ -85,6 +89,7 @@ impl Animator {
     fn animate(&mut self, solution: impl FnOnce(&mut dyn FnMut(Vec<String>)) -> String) -> String {
         self.stdout.execute(EnterAlternateScreen).unwrap();
         self.stdout.execute(Hide).unwrap();
+        let mut now = Instant::now();
         let mut cb = |current_state: Vec<String>| {
             if let Err(e) = (|| -> Result<(), std::io::Error> {
                 self.stdout.execute(Clear(ClearType::All))?;
@@ -94,12 +99,15 @@ impl Animator {
                     self.stdout.execute(MoveTo(0, y as u16))?;
                     write!(self.stdout, "{}", row)?;
                 }
-                thread::sleep(Duration::from_millis(10));
-                self.stdout.flush()?;
+                let elapsed = now.elapsed();
+                if elapsed < FRAME_DURATION {
+                    thread::sleep(FRAME_DURATION - elapsed);
+                }
                 Ok(())
             })() {
                 eprintln!("Error! {}", e);
             }
+            now = Instant::now();
         };
         let res = solution(&mut cb);
         self.stdout.execute(Show).unwrap();
