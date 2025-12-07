@@ -1,14 +1,27 @@
-use rayon::prelude::*;
-use std::collections::HashSet;
+use std::{cmp::Ordering, collections::HashSet};
 
 use crate::define_solution;
 
 define_solution!(DayFive, part_one, part_two);
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, PartialOrd)]
 struct Range {
     lower: u64,
     upper: u64,
+}
+
+impl Eq for Range {}
+
+impl Ord for Range {
+    fn cmp(&self, other: &Self) -> std::cmp::Ordering {
+        if self.lower < other.lower || self.upper < other.upper {
+            Ordering::Less
+        } else if self.upper == other.upper && self.lower == other.lower {
+            Ordering::Equal
+        } else {
+            Ordering::Greater
+        }
+    }
 }
 
 impl From<&str> for Range {
@@ -46,45 +59,51 @@ fn part_one(lines: Vec<String>) -> String {
         .to_string()
 }
 
+fn update_range(ranges: &mut Vec<Option<Range>>, current_index: usize) {
+    let (left, right) = ranges.split_at_mut(current_index + 1);
+    let Some(ref mut range) = left[current_index] else {
+        return;
+    };
+    for maybe_check_range in right {
+        let Some(check_range) = maybe_check_range else {
+            continue;
+        };
+        if is_num_in_range(&range, check_range.lower) || is_num_in_range(&range, check_range.upper)
+        {
+            range.lower = check_range.lower.min(range.lower);
+            range.upper = check_range.upper.max(range.upper);
+            maybe_check_range.take();
+        }
+    }
+}
+
 fn part_two(lines: Vec<String>) -> String {
     let lines_iter = lines.into_iter();
     let mut ranges: Vec<Option<Range>> = lines_iter
         .take_while(|line| !line.is_empty())
         .map(|next| Some(Range::from(next.as_str())))
         .collect();
-    let mut updated = false;
+    ranges.sort();
     let range_len = ranges.len();
-    while !updated {
-        updated = false;
-        for i in (0..range_len) {
-            if let Some(range) = maybe_range {
-                for (j, maybe_check_range) in ranges.iter().enumerate() {
-                    if let Some(check_range) = maybe_check_range{
-                        if is_num_in_range(&range, check_range.lower) || is_num_in_range(&range, check_range.upper){
-                            range.lower = check_range.lower.min(range.lower);
-                            range.upper = check_range.upper.max(range.upper);
-                            updated = true;
-                            ranges[j] = None;
-                        }
-
-                    }
-                }
-            }
+    for _ in 0..range_len {
+        for i in 0..range_len {
+            update_range(&mut ranges, i);
         }
     }
-    "".to_string()
-    // we need to combine ranges.
-    // let set_of_ranges = ranges.into_par_iter().fold(|| HashSet::new(), |mut acc: HashSet<u64>, range| {
-    //     for i in range.lower..=range.upper {
-    //         acc.insert(i);
-    //     }
-    //     acc
-    // }).collect_vec_list();
-    // println!("Collected all ranges");
-    //     set_of_ranges.into_iter().fold(HashSet::new(), |mut acc: HashSet<u64>, next| {
-    //     for set in next {
-    //         acc.extend(set);
-    //     }
-    //     acc
-    // }).len().to_string()
+    let mut all_ranges = ranges.iter().fold(Vec::new(), |mut acc, next| {
+        if let Some(range) = next {
+            acc.push(range.lower);
+            acc.push(range.upper);
+        }
+        acc
+    });
+    all_ranges.sort();
+    dbg!(&ranges);
+    ranges
+        .into_iter()
+        .fold(0, |acc, next| {
+            let Some(range) = next else { return acc };
+            acc + (range.upper + 1 - range.lower)
+        })
+        .to_string()
 }
