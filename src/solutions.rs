@@ -1,5 +1,15 @@
-use std::{collections::HashMap, time::Instant};
+use std::{
+    collections::HashMap,
+    io::{Stdout, Write, stdout},
+    thread::{self, Thread},
+    time::{Duration, Instant},
+};
 
+use crossterm::{
+    ExecutableCommand,
+    cursor::{Hide, MoveTo, Show},
+    terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
+};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 
@@ -36,8 +46,8 @@ pub enum Date {
     TwentyFourth,
     TwentyFifth,
 }
-pub type AdventSolution = Box<dyn Solution>;
-pub type UpdateFn<'a> = &'a mut dyn FnMut(String);
+pub type AdventSolution = Box<dyn Solution + Send + Sync>;
+pub type UpdateFn<'a> = &'a mut dyn FnMut(Vec<String>);
 pub trait Solution {
     fn solve(&self, lines: Vec<String>, part: Part, update: Option<UpdateFn>) -> String;
 }
@@ -62,6 +72,42 @@ impl TryFrom<usize> for AdventCalendarYear {
     }
 }
 
+struct Animator {
+    stdout: Stdout,
+}
+
+impl Animator {
+    fn new() -> Self {
+        let stdout = stdout();
+        Animator { stdout }
+    }
+
+    fn animate(&mut self, solution: impl FnOnce(&mut dyn FnMut(Vec<String>)) -> String) -> String {
+        self.stdout.execute(EnterAlternateScreen).unwrap();
+        self.stdout.execute(Hide).unwrap();
+        let mut cb = |current_state: Vec<String>| {
+            if let Err(e) = (|| -> Result<(), std::io::Error> {
+                self.stdout.execute(Clear(ClearType::All))?;
+                self.stdout.execute(MoveTo(0, 0))?;
+
+                for (y, row) in current_state.iter().enumerate() {
+                    self.stdout.execute(MoveTo(0, y as u16))?;
+                    write!(self.stdout, "{}", row)?;
+                }
+                thread::sleep(Duration::from_millis(10));
+                self.stdout.flush()?;
+                Ok(())
+            })() {
+                eprintln!("Error! {}", e);
+            }
+        };
+        let res = solution(&mut cb);
+        self.stdout.execute(Show).unwrap();
+        self.stdout.execute(LeaveAlternateScreen).unwrap();
+        res
+    }
+}
+
 impl AdventCalendarYear {
     fn get_solutions(&self) -> HashMap<Date, AdventSolution> {
         match self {
@@ -79,13 +125,20 @@ impl AdventCalendarYear {
         let Some(solution) = solutions.get(&current_date) else {
             panic!("Day not implemented {day}")
         };
-        let now = Instant::now();
-        let part_one = solution.solve(lines.clone(), Part::One, None);
-        let elapsed_time = now.elapsed();
-        println!("Part 1: {} took {} seconds", part_one, elapsed_time.as_secs_f64());
-        let now = Instant::now();
-        let part_two = solution.solve(lines, Part::Two, None);
-        let elapsed_time = now.elapsed();
-        println!("Part 2: {} took {} seconds", part_two, elapsed_time.as_secs_f64());
+        let lines_part_one = lines.clone();
+        let mut animator = Animator::new();
+        let part_one =
+            animator.animate(|update| solution.solve(lines_part_one, Part::One, Some(update)));
+
+        println!(
+            "Part 1: {}",
+            part_one,
+        );
+        let part_two =
+            animator.animate(|update| solution.solve(lines, Part::Two, Some(update)));
+        println!(
+            "Part 2: {}",
+            part_two,
+        );
     }
 }

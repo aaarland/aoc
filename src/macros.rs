@@ -4,7 +4,7 @@ macro_rules! define_solution {
         pub struct $name;
 
         impl crate::solutions::Solution for $name {
-            fn solve(&self, lines: Vec<String>, part: crate::solutions::Part, update: Option<&mut dyn FnMut(String)>) -> String {
+            fn solve(&self, lines: Vec<String>, part: crate::solutions::Part, _: Option<crate::solutions::UpdateFn>) -> String {
                 match part {
                     crate::solutions::Part::One => $solve_one(lines),
                     crate::solutions::Part::Two => $solve_two(lines),
@@ -24,7 +24,7 @@ macro_rules! define_solution_with_callback {
                 &self,
                 lines: Vec<String>,
                 part: crate::solutions::Part,
-                update: Option<&mut dyn FnMut(String)>,
+                update: Option<crate::solutions::UpdateFn>,
             ) -> String {
                 match part {
                     crate::solutions::Part::One => $solve_one(lines, update),
