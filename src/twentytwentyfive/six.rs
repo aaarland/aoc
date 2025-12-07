@@ -4,6 +4,7 @@ use crate::define_solution;
 
 define_solution!(DaySix, part_one, part_two);
 
+#[derive(Debug, PartialEq)]
 enum Ops {
     Plus,
     Multiply,
@@ -54,42 +55,70 @@ fn part_one(lines: Vec<String>) -> String {
         .to_string()
 }
 
+struct NewOps {
+    ops: Ops,
+    start_idx: usize,
+}
+
 fn part_two(lines: Vec<String>) -> String {
-    let ops: Vec<_> = lines
-        .iter()
-        .rev()
-        .next()
-        .unwrap()
-        .split_whitespace()
-        .map(|next| Ops::from(next))
-        .collect();
+    let mut ops = vec![];
+    for (i, c) in lines.iter().rev().next().unwrap().chars().enumerate() {
+        if c == ' ' {
+            continue;
+        }
+        ops.push(NewOps {
+            ops: Ops::from(c.to_string().as_str()),
+            start_idx: i,
+        });
+    }
 
     lines[..lines.len() - 1]
         .iter()
-        .map(|next| next.split_whitespace())
+        .map(|next| {
+            let mut problems = vec![];
+            for index in 0..ops.len() {
+                let current_range = if index + 1 == ops.len() {
+                    (ops[index].start_idx, next.len())
+                } else {
+                    (ops[index].start_idx, ops[index + 1].start_idx - 1)
+                };
+                let problem: Vec<_> = next[current_range.0..current_range.1].chars().collect();
+                problems.push(problem);
+            }
+            problems
+        })
         .fold(
             HashMap::new(),
             |mut acc: HashMap<usize, Vec<String>>, next| {
-                for (i, num) in next.enumerate() {
-                    let each_num: Vec<char> = num.chars().collect();
+                for (i, num) in next.iter().enumerate() {
                     acc.entry(i)
                         .and_modify(|entry| {
                             for (j, string_entry) in entry.iter_mut().enumerate() {
-                                if let Some(current_num) = each_num.get(j) {
+                                if let Some(current_num) = num.get(j) {
                                     string_entry.push(*current_num);
                                 }
                             }
                         })
-                        .or_insert(each_num.iter().map(|c| c.to_string()).collect());
+                        .or_insert(num.iter().map(|c| c.to_string()).collect());
                 }
-                dbg!(&acc);
                 acc
             },
         )
         .iter()
         .fold(0, |acc, next| {
             acc + next.1.iter().fold(0, |inner_acc, next_num| {
-                ops[*next.0].calculate_next(inner_acc, next_num.parse().unwrap())
+                let op = &ops[*next.0];
+                if op.ops == Multiply && inner_acc == 0 {
+                op
+                    .ops
+                    .calculate_next(1, next_num.trim().parse().unwrap())
+
+                }else {
+                op
+                    .ops
+                    .calculate_next(inner_acc, next_num.trim().parse().unwrap())
+
+                }
             })
         })
         .to_string()
