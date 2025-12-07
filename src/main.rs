@@ -14,6 +14,7 @@ mod twentytwentyone;
 mod twentytwentythree;
 mod twentytwentytwo;
 mod utils;
+mod animator;
 
 fn main() {
     let config = menu::Config::new(env::args()).unwrap();
