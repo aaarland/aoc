@@ -11,6 +11,8 @@ use crossterm::terminal::disable_raw_mode;
 use crossterm::terminal::enable_raw_mode;
 use crossterm::ExecutableCommand;
 
+use crate::cli::Cli;
+
 pub struct Config {
     pub year: usize,
     pub day: usize,
@@ -18,24 +20,24 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(mut args: impl Iterator<Item = String>) -> io::Result<Config> {
-        args.next();
+    pub fn new(cli: Cli) -> io::Result<Config> {
+
         let year;
         let day;
         let file;
-        if let Some(arg) = args.next() {
-            year = arg.parse::<usize>().expect("Please type a number!");
+        if let Some(arg) = cli.year {
+            year = arg
         } else {
             year = get_years();
         }
-        if let Some(arg) = args.next() {
-            day = arg.parse::<usize>().expect("Please type a number!");
+        if let Some(arg) = cli.day {
+            day = arg
         } else {
             day = get_days();
         }
 
-        if let Some(arg) = args.next() {
-            file = arg;
+        if let Some(arg) = cli.input {
+            file = arg.to_string();
         } else {
             file = get_file(year, day);
         }

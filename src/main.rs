@@ -1,9 +1,11 @@
 use std::env;
 
 use utils::read_db;
+use clap::{Parser};
 
-use crate::solutions::AdventCalendarYear;
+use crate::{cli::Cli, solutions::AdventCalendarYear};
 
+mod animator;
 mod macros;
 mod menu;
 mod solutions;
@@ -14,10 +16,11 @@ mod twentytwentyone;
 mod twentytwentythree;
 mod twentytwentytwo;
 mod utils;
-mod animator;
+mod cli;
 
 fn main() {
-    let config = menu::Config::new(env::args()).unwrap();
+    let cli = Cli::parse();
+    let config = menu::Config::new(cli).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
     let lines = tokio::runtime::Builder::new_multi_thread()
@@ -40,7 +43,7 @@ fn main() {
         _ => {
             if let Ok(year) = AdventCalendarYear::try_from(config.year) {
                 year.run(config.day, lines)
-            }else {
+            } else {
                 println!("No such year");
             }
         }
