@@ -14,7 +14,7 @@ use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
 use tokio::time::error::Elapsed;
 
-use crate::animator::Animator;
+use crate::{animator::Animator, cli::Cli};
 
 pub enum Part {
     One,
@@ -84,7 +84,7 @@ impl AdventCalendarYear {
             AdventCalendarYear::TwentyTwentyFive => crate::twentytwentyfive::get_solutions(),
         }
     }
-    pub fn run(&self, day: usize, lines: Vec<String>) {
+    pub fn run(&self, day: usize, lines: Vec<String>, cli: Cli) {
         let solutions = self.get_solutions();
         let Some(current_date) = Date::from_usize(day - 1) else {
             panic!("Date out of range {day}")
@@ -93,19 +93,12 @@ impl AdventCalendarYear {
             panic!("Day not implemented {day}")
         };
         let lines_part_one = lines.clone();
-        let mut animator = Animator::new();
+        let mut animator = Animator::new(cli.frame_rate);
         let part_one =
             animator.animate(|update| solution.solve(lines_part_one, Part::One, Some(update)));
 
-        println!(
-            "Part 1: {}",
-            part_one,
-        );
-        let part_two =
-            animator.animate(|update| solution.solve(lines, Part::Two, Some(update)));
-        println!(
-            "Part 2: {}",
-            part_two,
-        );
+        println!("Part 1: {}", part_one,);
+        let part_two = animator.animate(|update| solution.solve(lines, Part::Two, Some(update)));
+        println!("Part 2: {}", part_two,);
     }
 }

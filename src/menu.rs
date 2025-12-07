@@ -20,7 +20,7 @@ pub struct Config {
 }
 
 impl Config {
-    pub fn new(cli: Cli) -> io::Result<Config> {
+    pub fn new(cli: &Cli) -> io::Result<Config> {
 
         let year;
         let day;
@@ -36,11 +36,12 @@ impl Config {
             day = get_days();
         }
 
-        if let Some(arg) = cli.input {
+        if let Some(arg) = &cli.input {
             file = arg.to_string();
         } else {
             file = get_file(year, day);
         }
+
         Ok(Config { year, day, file })
     }
 }

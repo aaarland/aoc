@@ -1,5 +1,3 @@
-use std::env;
-
 use utils::read_db;
 use clap::{Parser};
 
@@ -20,7 +18,7 @@ mod cli;
 
 fn main() {
     let cli = Cli::parse();
-    let config = menu::Config::new(cli).unwrap();
+    let config = menu::Config::new(&cli).unwrap();
     let day = config.day as i32;
     let year = config.year as i32;
     let lines = tokio::runtime::Builder::new_multi_thread()
@@ -42,7 +40,7 @@ fn main() {
         2021 => advent_funcs_2021[config.day - 1](lines),
         _ => {
             if let Ok(year) = AdventCalendarYear::try_from(config.year) {
-                year.run(config.day, lines)
+                year.run(config.day, lines, cli)
             } else {
                 println!("No such year");
             }

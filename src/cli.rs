@@ -11,6 +11,8 @@ pub struct Cli {
     pub day: Option<usize>,
     #[arg(value_enum)]
     pub input: Option<Input>,
+    #[arg(short, long)]
+    pub frame_rate: Option<usize>,
 }
 
 #[derive(Clone, ValueEnum, Debug)]

@@ -12,23 +12,21 @@ use crossterm::{
 
 pub struct Animator {
     stdout: Stdout,
+    fps: Option<usize>,
 }
 
-const FPS: u32 = 60;
-const FRAME_DURATION: Duration = Duration::from_millis(1000 / FPS as u64);
 impl Animator {
-    pub fn new() -> Self {
+    pub fn new(fps: Option<usize>) -> Self {
         let stdout = stdout();
-        Animator { stdout }
+        Animator { stdout, fps }
     }
 
-    pub fn animate(
-        &mut self,
-        solution: impl FnOnce(&mut dyn FnMut(Vec<String>)) -> String,
-    ) -> String {
+    pub fn animate(&mut self, solution: impl FnOnce(&mut dyn FnMut(Vec<String>)) -> String,) -> String {
+        let Some(fps) = self.fps else { return solution(&mut |_| {}) };
         self.stdout.execute(EnterAlternateScreen).unwrap();
         self.stdout.execute(Hide).unwrap();
         let mut now = Instant::now();
+        let frame_duration: Duration = Duration::from_millis(1000 / fps as u64);
         let mut cb = |current_state: Vec<String>| {
             if let Err(e) = (|| -> Result<(), std::io::Error> {
                 self.stdout.execute(Clear(ClearType::All))?;
@@ -39,8 +37,8 @@ impl Animator {
                     write!(self.stdout, "{}", row)?;
                 }
                 let elapsed = now.elapsed();
-                if elapsed < FRAME_DURATION {
-                    thread::sleep(FRAME_DURATION - elapsed);
+                if elapsed < frame_duration {
+                    thread::sleep(frame_duration - elapsed);
                 }
                 Ok(())
             })() {
