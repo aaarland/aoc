@@ -4,7 +4,7 @@ use crate::solutions::{Part, Solution, UpdateFn};
 pub struct DayEight;
 
 impl Solution for DayEight {
-    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
+    fn solve(&self, lines: Vec<String>, _part: Part, _: Option<UpdateFn>) -> String {
         part_one(lines.clone()).to_string()
     }
 }
@@ -39,7 +39,6 @@ fn part_one(lines: Vec<String>) -> usize {
     step_counter
 }
 
-fn part_two() {}
 
 #[cfg(test)]
 mod tests {

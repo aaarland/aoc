@@ -1,9 +1,8 @@
 use image::{DynamicImage, GenericImage};
 use std::collections::HashSet;
-use std::sync::{Arc, Mutex};
-use std::{thread, usize};
+use std::usize;
 
-use crate::{define_solution, sprites};
+use crate::define_solution;
 
 define_solution!(DaySix, part_one, part_two);
 
@@ -134,6 +133,7 @@ impl Board {
     }
 }
 
+#[allow(dead_code)]
 fn generate_image(board: PartialBoard, image: &mut DynamicImage, sprites: &Vec<DynamicImage>) {
     let sprite_size = 32;
     let empty_tile = &sprites[0];
@@ -206,7 +206,7 @@ fn part_one(lines: Vec<String>) -> String {
     solution
 }
 
-fn part_two(lines: Vec<String>) -> String {
+fn part_two(_lines: Vec<String>) -> String {
     "".into()
 }
 

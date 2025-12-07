@@ -1,16 +1,5 @@
 use image::DynamicImage;
 
-pub enum Rotation {
-    North,
-    East,
-    South,
-    West,
-}
-
-pub trait Sprite {
-    fn image(&self) -> &DynamicImage;
-}
-
 pub fn load_sprite(
     path: &str,
     size: u32,

@@ -60,6 +60,6 @@ fn part_one(lines: Vec<String>) -> String {
         .to_string()
 }
 
-fn part_two(lines: Vec<String>) -> String {
+fn part_two(_lines: Vec<String>) -> String {
     "".into()
 }

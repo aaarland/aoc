@@ -7,7 +7,7 @@ define_solution!(DayFive, part_one, part_two);
 fn part_one(lines: Vec<String>) -> String {
     let first_section = lines.iter().take_while(|line| !line.is_empty());
     let second_section = lines.iter().skip_while(|line| !line.is_empty()).skip(1);
-    let (before, after): (HashMap<i32, Vec<i32>>, HashMap<i32, Vec<i32>>) = first_section.fold(
+    let (_before, after): (HashMap<i32, Vec<i32>>, HashMap<i32, Vec<i32>>) = first_section.fold(
         (HashMap::new(), HashMap::new()),
         |(mut before, mut after), next| {
             let (x_str, y_str) = next.split_once('|').expect("Unable to split");
@@ -69,7 +69,7 @@ where
 fn part_two(lines: Vec<String>) -> String {
     let first_section = lines.iter().take_while(|line| !line.is_empty());
     let second_section = lines.iter().skip_while(|line| !line.is_empty()).skip(1);
-    let (before, after): (HashMap<i32, Vec<i32>>, HashMap<i32, Vec<i32>>) = first_section.fold(
+    let (_before, after): (HashMap<i32, Vec<i32>>, HashMap<i32, Vec<i32>>) = first_section.fold(
         (HashMap::new(), HashMap::new()),
         |(mut before, mut after), next| {
             let (x_str, y_str) = next.split_once('|').expect("Unable to split");

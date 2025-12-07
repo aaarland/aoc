@@ -5,7 +5,7 @@ use rayon::prelude::*;
 pub struct DayEleven;
 
 impl Solution for DayEleven {
-    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
+    fn solve(&self, lines: Vec<String>, _part: Part, _: Option<UpdateFn>) -> String {
         part_one(lines.clone()).to_string()
     }
 }
@@ -19,7 +19,6 @@ fn part_one(lines: Vec<String>) -> usize {
     universe.paths.par_iter().map(|(_, v)| *v).sum()
 }
 
-fn part_two() {}
 
 #[derive(Debug)]
 struct Universe {

@@ -34,11 +34,12 @@ fn test_pattern(reg: &Regex, hay: &str, acc: &mut Vec<(i32, i32)>) {
 
 enum Logic {
     Do,
+    #[allow(dead_code)]
     Dont,
 }
 
 fn part_two(lines: Vec<String>) -> String {
-    let current_logic = Logic::Do;
+    let _current_logic = Logic::Do;
     let multiplications: Vec<(i32, i32)> = lines.iter().fold(Vec::new(), |mut acc, next| {
         let pattern = Regex::new(r"mul\((\d+),(\d+)\)").expect("regex failed");
         let mut donts: VecDeque<_> = next.split("don't()").collect();

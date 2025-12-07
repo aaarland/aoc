@@ -5,7 +5,7 @@ use crate::solutions::{Part, Solution, UpdateFn};
 pub struct DayOne;
 
 impl Solution for DayOne {
-    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
+    fn solve(&self, lines: Vec<String>, _part: Part, _: Option<UpdateFn>) -> String {
         let mut numbers: Vec<(char, char)> = Vec::new();
         lines.iter().for_each(|line| {
             let first_number = get_number_from_line(line.chars(), line.to_owned(), None);

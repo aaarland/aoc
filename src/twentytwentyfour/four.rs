@@ -112,7 +112,7 @@ fn part_one(lines: Vec<String>) -> String {
     result
 }
 
-fn part_two(lines: Vec<String>) -> String {
+fn part_two(_lines: Vec<String>) -> String {
     String::new()
 }
 

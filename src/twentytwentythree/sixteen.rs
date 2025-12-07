@@ -197,6 +197,7 @@ impl From<char> for Tiles {
     }
 }
 
+#[allow(dead_code)]
 fn generate_image(tiles: Vec<Vec<Tiles>>, visited: Vec<Vec<Vec<Direction>>>) {
     let sprite_size = 32;
     let sprites = sprites::load_sprite("sprites/lasers.png", sprite_size, 3, 3).unwrap();

@@ -1,4 +1,4 @@
-use std::{cell::RefCell, fmt, rc::Rc};
+use std::{cell::RefCell, rc::Rc};
 
 use camino::Utf8PathBuf;
 use indexmap::IndexMap;
@@ -14,7 +14,7 @@ use crate::solutions::{Part, Solution, UpdateFn};
 
 pub struct DaySeven;
 impl Solution for DaySeven {
-    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
+    fn solve(&self, lines: Vec<String>, _part: Part, _: Option<UpdateFn>) -> String {
         solution(lines)
     }
 }
@@ -128,30 +128,6 @@ fn all_dirs(n: NodeHandle) -> Box<dyn Iterator<Item = NodeHandle>> {
                 .flatten(),
         ),
     )
-}
-struct PrettyNode<'a>(&'a NodeHandle);
-
-impl<'a> fmt::Debug for PrettyNode<'a> {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        let this = self.0.borrow();
-        if this.size == 0 {
-            writeln!(f, "(dir)")?;
-        } else {
-            writeln!(f, "(file, size={})", this.size)?;
-        }
-
-        for (name, child) in &this.children {
-            // not very efficient at all, but shrug
-            for (index, line) in format!("{:?}", PrettyNode(child)).lines().enumerate() {
-                if index == 0 {
-                    writeln!(f, "{name} {line}")?;
-                } else {
-                    writeln!(f, "  {line}")?;
-                }
-            }
-        }
-        Ok(())
-    }
 }
 fn solution(lines: Vec<String>) -> String {
     let lines = lines

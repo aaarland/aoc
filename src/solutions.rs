@@ -1,18 +1,7 @@
-use std::{
-    collections::HashMap,
-    io::{Stdout, Write, stdout},
-    thread::{self, Thread},
-    time::{Duration, Instant},
-};
+use std::collections::HashMap;
 
-use crossterm::{
-    ExecutableCommand,
-    cursor::{Hide, MoveTo, Show},
-    terminal::{Clear, ClearType, EnterAlternateScreen, LeaveAlternateScreen},
-};
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
-use tokio::time::error::Elapsed;
 
 use crate::{animator::Animator, cli::Cli};
 

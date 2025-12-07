@@ -1,9 +1,4 @@
 use core::panic;
-use std::{
-    collections::VecDeque,
-    fs::File,
-    io::{BufRead, BufReader},
-};
 
 use regex::Regex;
 use sqlx::{sqlite::SqlitePoolOptions, SqlitePool};
@@ -24,6 +19,7 @@ pub async fn get_pool() -> &'static SqlitePool {
     .await
 }
 
+#[allow(dead_code)]
 pub async fn read_file(location: &String) -> Vec<String> {
     let Some((year, rest)) = location.split_once("/") else {
         panic!("No / delimiter in string {location}");
@@ -37,6 +33,7 @@ pub async fn read_file(location: &String) -> Vec<String> {
     read_db(day, year.parse().expect("failed to parse year"), location).await
 }
 
+#[allow(dead_code)]
 pub fn extract_day_year(file: &str) -> (i32, i32) {
     let re = Regex::new(r"^(\d{4})/(?:day|example)(\d+)$").unwrap();
 

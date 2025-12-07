@@ -4,7 +4,7 @@ use crate::solutions::{Part, Solution, UpdateFn};
 //
 pub struct DayFour;
 impl Solution for DayFour {
-    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
+    fn solve(&self, lines: Vec<String>, _part: Part, _: Option<UpdateFn>) -> String {
         day_four_part_one(lines).to_string()
     }
 }
