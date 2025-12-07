@@ -37,8 +37,9 @@ pub enum Date {
     TwentyFifth,
 }
 pub type AdventSolution = Box<dyn Solution>;
+pub type UpdateFn<'a> = &'a mut dyn FnMut(String);
 pub trait Solution {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String;
+    fn solve(&self, lines: Vec<String>, part: Part, update: Option<UpdateFn>) -> String;
 }
 
 pub enum AdventCalendarYear {
@@ -79,11 +80,11 @@ impl AdventCalendarYear {
             panic!("Day not implemented {day}")
         };
         let now = Instant::now();
-        let part_one = solution.solve(lines.clone(), Part::One);
+        let part_one = solution.solve(lines.clone(), Part::One, None);
         let elapsed_time = now.elapsed();
         println!("Part 1: {} took {} seconds", part_one, elapsed_time.as_secs_f64());
         let now = Instant::now();
-        let part_two = solution.solve(lines, Part::Two);
+        let part_two = solution.solve(lines, Part::Two, None);
         let elapsed_time = now.elapsed();
         println!("Part 2: {} took {} seconds", part_two, elapsed_time.as_secs_f64());
     }

@@ -1,10 +1,10 @@
 use std::fmt::Display;
 
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 pub struct DayEighteen;
 
 impl Solution for DayEighteen {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         part_one(lines.clone()).to_string()
     }
 }

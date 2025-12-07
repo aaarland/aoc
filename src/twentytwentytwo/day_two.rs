@@ -1,4 +1,4 @@
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 
 //Start day 2
 fn check_letter(letter: Option<&str>, opponent: &str) -> i32 {
@@ -58,7 +58,7 @@ fn solution(lines: Vec<String>) -> String {
 }
 pub struct DayTwo;
 impl Solution for DayTwo {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         solution(lines)
     }
 }

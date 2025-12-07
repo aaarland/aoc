@@ -10,11 +10,11 @@ use nom::{
     Finish, IResult,
 };
 
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 
 pub struct DaySeven;
 impl Solution for DaySeven {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         solution(lines)
     }
 }

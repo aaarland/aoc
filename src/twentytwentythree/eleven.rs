@@ -1,11 +1,11 @@
 use std::{cell::RefCell, cmp, collections::HashMap, fmt::Display, rc::Rc};
 
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 use rayon::prelude::*;
 pub struct DayEleven;
 
 impl Solution for DayEleven {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         part_one(lines.clone()).to_string()
     }
 }

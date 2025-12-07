@@ -1,4 +1,4 @@
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 
 //Start day 3
 // fn first_part(lines: Vec<String>) -> u32 {
@@ -19,7 +19,7 @@ use crate::solutions::{Part, Solution};
 // }
 pub struct DayThree;
 impl Solution for DayThree {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         solution(lines)
     }
 }

@@ -1,10 +1,10 @@
 use std::collections::HashMap;
 
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 pub struct DayEight;
 
 impl Solution for DayEight {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         part_one(lines.clone()).to_string()
     }
 }

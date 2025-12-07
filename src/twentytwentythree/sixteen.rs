@@ -2,13 +2,13 @@ use image::{DynamicImage, GenericImage};
 use rayon::iter::{IntoParallelIterator, ParallelIterator};
 
 use crate::{
-    solutions::{Part, Solution},
+    solutions::{Part, Solution, UpdateFn},
     sprites,
 };
 pub struct DaySixteen;
 
 impl Solution for DaySixteen {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         match part {
             Part::One => part_one(lines).to_string(),
             Part::Two => part_two(lines).to_string(),

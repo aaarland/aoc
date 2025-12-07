@@ -1,10 +1,10 @@
 use std::collections::{HashSet, VecDeque};
 
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 pub struct DayThree;
 
 impl Solution for DayThree {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         match part {
             Part::One => part_one(lines).to_string(),
             Part::Two => part_two(lines).to_string(),

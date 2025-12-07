@@ -1,9 +1,9 @@
-use crate::solutions::{Part, Solution};
+use crate::solutions::{Part, Solution, UpdateFn};
 
 pub struct DayOne;
 
 impl Solution for DayOne {
-    fn solve(&self, lines: Vec<String>, part: Part) -> String {
+    fn solve(&self, lines: Vec<String>, part: Part, _: Option<UpdateFn>) -> String {
         solution(lines)
     }
 }
