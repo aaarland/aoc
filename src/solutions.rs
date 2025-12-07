@@ -1,4 +1,4 @@
-use std::collections::HashMap;
+use std::{collections::HashMap, time::Instant};
 
 use num_derive::FromPrimitive;
 use num_traits::FromPrimitive;
@@ -78,9 +78,13 @@ impl AdventCalendarYear {
         let Some(solution) = solutions.get(&current_date) else {
             panic!("Day not implemented {day}")
         };
+        let now = Instant::now();
         let part_one = solution.solve(lines.clone(), Part::One);
-        println!("Part 1: {part_one}");
+        let elapsed_time = now.elapsed();
+        println!("Part 1: {} took {} seconds", part_one, elapsed_time.as_secs_f64());
+        let now = Instant::now();
         let part_two = solution.solve(lines, Part::Two);
-        println!("Part 2: {part_two}");
+        let elapsed_time = now.elapsed();
+        println!("Part 2: {} took {} seconds", part_two, elapsed_time.as_secs_f64());
     }
 }
