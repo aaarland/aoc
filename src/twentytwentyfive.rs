@@ -4,12 +4,13 @@ use maplit::hashmap;
 
 use crate::solutions::{AdventSolution, Date};
 
+mod five;
+mod four;
 mod one;
+mod seven;
+mod six;
 mod three;
 mod two;
-mod four;
-mod five;
-mod six;
 
 pub fn get_solutions() -> HashMap<Date, AdventSolution> {
     hashmap! {
@@ -19,5 +20,6 @@ pub fn get_solutions() -> HashMap<Date, AdventSolution> {
         Date::Fourth => Box::new(four::DayFour) as AdventSolution,
         Date::Fifth => Box::new(five::DayFive) as AdventSolution,
         Date::Sixth => Box::new(six::DaySix) as AdventSolution,
+        Date::Seventh => Box::new(seven::DaySeven) as AdventSolution,
     }
 }
